@@ -2,8 +2,8 @@ const botToken = "MTEyNzg4MjA4NjczMzMzMjU1MA.GbIRgh.e3u6hH7z-RNMcY5LFr28iE0NxC99
 const clientId = "1127882086733332550"
 // const testimporter = require("./testimporter.js") 
 const { Client, GatewayIntentBits, Message, SlashCommandBuilder, REST, Routes, Events } = require("discord.js") //classed capitalised
-const { joinVoiceChannel, VoiceConnectionStatus, getVoiceConnection } = require('@discordjs/voice');
 const pingImport = require("./commands/ping.js");
+const joinImport = require('./commands/join.js');
 
 // I think this needs to go into a command response instead of the top level
 // i cant see terminal :( okook fair enough, i cant see terminal output is it running?
@@ -21,25 +21,10 @@ client.on(Events.InteractionCreate, async interaction => {
         await pingImport.execute(interaction);
     }
 
-    if (interaction.commandName === 'join') {
-
-        const channel = client.channels.cache.get(connection.channelId);
-        if(!channel) return console.error("No channel ID found");
-
-        const connection = joinVoiceChannel({
-            channelId: channel.id, 
-            guildId: channel.guild.id,
-            adapterCreator: channel.guild.voiceAdapterCreator
-        })
-
-        const currentConnection = getVoiceConnection(myVoiceChannel.guild.id);
-
-        const subscription = connection.subscribe(audioPlayer); //will play audio on the voice conneciton
-        
-        
-        channel.join().then(connection => {
-            console.log("Connected")
-        }).catch(console.error(error));
+    if (interaction.isChatInputCommand()) {
+        if (interaction.commandName === 'join'){
+            joinImport.execute(interaction);
+        }
     }
 });
 
@@ -60,10 +45,7 @@ client.login(botToken);
 async function setupCommands() {
     const commands = [
         pingImport.data,
-        {
-            name: 'join',
-            description: 'Moosic will join the current voice channel',
-        },
+        joinImport.data,
         {
             name: 'disconnect',
             description: 'Moosic will diconnect from the channel',
@@ -108,7 +90,7 @@ setupCommands();
 // const myNumber = 1234;
 
 // for(let i = 0; i < 10; i++) {
-//     console.log('Nathan is a penis', i);
+//     console.log('message', i);
 // }
 
 // testimport.myFunc()
