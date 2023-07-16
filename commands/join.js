@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, ChannelType, CommandInteraction, Channel } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
+const { myVoiceChannels } = require('../voiceChannels.js');
+
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,12 +18,18 @@ module.exports = {
     /**
      * @param {Channel} voiceChannel
      */
+        
         const voiceChannel = interaction.options.getChannel('channel');
         const voiceConnetion = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: interaction.guildId,
             adapterCreator: interaction.guild.voiceAdapterCreator,
         });
+
+        myVoiceChannels[interaction.guild.id] = voiceChannel;
+
+        console.log('myVoiceChannels', myVoiceChannels);
+
         await interaction.reply(`joining: ${voiceChannel.name}`);
     }
 };
