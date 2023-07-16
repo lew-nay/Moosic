@@ -9,24 +9,23 @@ const joinImport = require('./commands/join.js');
 const disconnectImport = require('./commands/disconnect.js');
 const playImport = require('./commands/play.js');
 
-
 //Events.InteractionCreate - static is better ;)
 client.on(Events.InteractionCreate, async interaction => {
 
     console.log('interactCreateEvent', interaction);
     if (!interaction.isChatInputCommand()) return;
 
-    switch(interaction.isChatInputCommand()){
-        case interaction.commandName === 'ping':
+    switch(interaction.commandName){
+        case 'ping':
             pingImport.execute(interaction);
             break;
-        case interaction.commandName === 'join':
+        case 'join':
             joinImport.execute(interaction);
             break;
-        case interaction.commandName === 'disconnect':
+        case 'disconnect':
             disconnectImport.execute(interaction);
             break;
-        case interaction.commandName === 'play':
+        case 'play':
             playImport.execute(interaction);
             break;
     }

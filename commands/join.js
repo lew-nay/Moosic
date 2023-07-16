@@ -7,7 +7,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('join')
         .setDescription('Moosic joins a voice channel')
-        .addChannelOption((option) => 
+        .addChannelOption(option => 
             option
             .setName('channel')
             .setDescription('the channel to join') //gives the user the option of which voice channel to join

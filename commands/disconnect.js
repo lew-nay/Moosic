@@ -13,7 +13,6 @@ module.exports = {
         if (!channel) return interaction.reply('not connected to a channel');
 
         const connection = getVoiceConnection(interaction.guild.id);
-
         connection.destroy();
 
         await interaction.reply(`disconnecting from: ${channel.name}`)

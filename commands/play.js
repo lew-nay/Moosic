@@ -26,12 +26,13 @@ module.exports = {
 
         const channel = myVoiceChannels[interaction.member.voice.channel];
         if(!channel) return interaction.reply('not connected to a channel');
+        
         const query = interaction.options.getString(query, true);
 
         try {
             const{ track } = await player.play(channel, query, {
                 nodeOptions: {
-                    metadata: interaction.getString(query)
+                    metadata: interaction
                 }
             });
             return interaction.followUp(`**${track.title}** enqueued`);
