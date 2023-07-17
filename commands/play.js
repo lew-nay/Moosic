@@ -2,32 +2,34 @@ const { createAudioPlayer, NoSubscriberBehavior, createAudioResource } = require
 const { SlashCommandBuilder } = require('discord.js');
 const { Player } = require('discord-player');
 const { SpotifyExtractor } = require('@discord-player/extractor');
-const { Client, GuildVoiceStates } = require('discord.js');
+const { Client, GatewayIntentBits, GuildVoiceStates } = require('discord.js');
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GuildVoiceStates]});
 const { myVoiceChannels } = require('../voiceChannels.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('play')
         .setDescription('Moosic will play audio')
-        .addStringOption(option => 
-            option
-            .setName('youtube')
-            .setDescription('enter a query to be searched on youtube'))
+        //.addStringOption(option => 
+        //     option
+        //     .setName('youtube')
+        //     .setDescription('enter a query to be searched on youtube'))
         .addStringOption(option =>
             option
             .setName('spotify')
             .setDescription('search through spotify')),
+       
     
     execute: async (interaction) => {
-        const client = new Client({ intents: [GuildVoiceStates]});
+        //const client = new Client({ intents: [GuildVoiceStates]});
         const player = new Player(client);
 
-        await player.extractors.loadDefault();
+        const query = interaction.options.getString('spotify');
 
-        const channel = myVoiceChannels[interaction.member.voice.channel];
+        await player.extractors.register(SpotifyExtractor, {});
+
+        const channel = myVoiceChannels[interaction.voice.channel];
         if(!channel) return interaction.reply('not connected to a channel');
-        
-        const query = interaction.options.getString(query, true);
 
         try {
             const{ track } = await player.play(channel, query, {
