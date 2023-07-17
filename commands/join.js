@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ChannelType, CommandInteraction, Channel } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { joinVoiceChannel, VoiceConnectionStatus } = require('@discordjs/voice');
 const { myVoiceChannels } = require('../voiceChannels.js');
 
 
@@ -25,6 +25,14 @@ module.exports = {
             guildId: interaction.guildId,
             adapterCreator: interaction.guild.voiceAdapterCreator,
         });
+
+        // const onDisconnect = () => {
+        //     console.log('i have left, sad');
+        //     delete myVoiceChannels[interaction.guild.id];
+        //     voiceConnetion.off(VoiceConnectionStatus.Destroyed, onDisconnect);
+        // }
+
+        // voiceConnetion.on(VoiceConnectionStatus.Destroyed, onDisconnect)
 
         myVoiceChannels[interaction.guild.id] = voiceChannel;
 
