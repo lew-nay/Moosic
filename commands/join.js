@@ -20,7 +20,7 @@ module.exports = {
      */
         
         const voiceChannel = interaction.options.getChannel('channel');
-        const voiceConnetion = joinVoiceChannel({
+        const voiceConnection = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: interaction.guildId,
             adapterCreator: interaction.guild.voiceAdapterCreator,

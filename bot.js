@@ -2,11 +2,27 @@ const { botToken, clientId } = require('./config.js');
 
 const { Client, GatewayIntentBits, Message, SlashCommandBuilder, REST, Routes, Events } = require("discord.js") //classes capitalised
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
+const { Player } = require('discord-player');
+const player = new Player(client);
 
 const pingImport = require("./commands/ping.js");
 const joinImport = require('./commands/join.js');
 const disconnectImport = require('./commands/disconnect.js');
 const playImport = require('./commands/play.js');
+const queueImport = require('./commands/queue.js');
+const skipImport = require('./commands/skip.js');
+
+player.on('debug', async (message) => {
+    // Emitted when the player sends debug info
+    // Useful for seeing what dependencies, extractors, etc are loaded
+    console.log(`General player debug event: ${message}`);
+});
+
+player.events.on('debug', async (queue, message) => {
+    // Emitted when the player queue sends debug info
+    // Useful for seeing what state the current queue is at
+    console.log(`Player debug event: ${message}`);
+});
 
 //Events.InteractionCreate - static is better ;)
 client.on(Events.InteractionCreate, async interaction => {
@@ -25,8 +41,13 @@ client.on(Events.InteractionCreate, async interaction => {
             disconnectImport.execute(interaction);
             break;
         case 'play':
-            playImport.execute(interaction, client);
+            playImport.execute(interaction, client, player);
             break;
+        case 'queue':
+            queueImport.execute(interaction);
+            break;
+        case 'skip':
+            skipImport.execute(interaction);
     }
 });
 

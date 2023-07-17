@@ -4,7 +4,9 @@ const pingImport = require("./commands/ping.js");
 const joinImport = require('./commands/join.js');
 const disconnectImport = require('./commands/disconnect.js');
 const playImport = require('./commands/play.js');
-const { REST, Routes, } = require("discord.js") //classes capitalised
+const skipImport = require('./commands/skip.js');
+const queueImport = require('./commands/queue.js');
+const { REST, Routes, } = require("discord.js"); //classes capitalised
 
 //sets up the slash commands
 async function setupCommands() {
@@ -13,6 +15,8 @@ async function setupCommands() {
         joinImport.data,
         disconnectImport.data,
         playImport.data,
+        skipImport.data,
+        queueImport.data,
     ];
 
     //idk what this actually does, was in the example, doesn't work without it

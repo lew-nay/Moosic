@@ -1,9 +1,8 @@
 const { createAudioPlayer, NoSubscriberBehavior, createAudioResource } = require('@discordjs/voice');
 const { SlashCommandBuilder } = require('discord.js');
-const { Player } = require('discord-player');
 const { SpotifyExtractor, YoutubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor');
 const { Client, GatewayIntentBits, GuildVoiceStates } = require('discord.js');
-//const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GuildVoiceStates]});
+const { joinVoiceChannel } = require('@discordjs/voice');
 const { myVoiceChannels } = require('../voiceChannels.js');
 
 module.exports = {
@@ -30,19 +29,33 @@ module.exports = {
                 )),  
        
     
-    execute: async (interaction, client) => {
-        //const client = new Client({ intents: [GuildVoiceStates]});
-        const player = new Player(client);
+    execute: async (interaction, client, player) => {
+        await interaction.deferReply();
+
+        if(!interaction.member.voice.channel){
+            return interaction.followUp('you are not connected to a voice channel');
+        }
+
+        if(!myVoiceChannels[interaction.guild.id]){
+            const voiceChannel = interaction.member.voice.channel;
+            
+            const voiceConnection = joinVoiceChannel({
+                channelId: interaction.member.guild.id,
+                guildId: interaction.guildId,
+                adapterCreator: interaction.guild.voiceAdapterCreator,
+            });
+        
+            myVoiceChannels[interaction.guild.id] = voiceChannel;
+
+            await interaction.followUp(`joining: ${voiceChannel.name}`);
+        }
 
         const query = interaction.options.getString('query');
         const engine = interaction.options.getString('engine');
 
-        await interaction.deferReply();
+        const channel = myVoiceChannels[interaction.guild.id];
 
         await player.extractors.loadDefault();
-
-        const channel = myVoiceChannels[interaction.guild.id];
-        if(!channel) return interaction.reply('not connected to a channel');
 
         try {
             const{ track } = await player.play(channel, query, {
