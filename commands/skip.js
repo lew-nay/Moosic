@@ -1,17 +1,17 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { useQueue } = require("discord-player");
-const { myVoiceChannels } = require('../voiceChannels.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('skip')
-        .setDescription('skips current song'),
+        .setDescription('Skips current song'),
     
     execute: async (interaction) =>{
         const queue = useQueue(interaction.guild.id);
+        track = queue.currentTrack;
         queue.node.skip();
 
-        await interaction.reply('skipping');
+        await interaction.reply(`Skipping ${track.title} - ${track.author}`);
     }
 
 }

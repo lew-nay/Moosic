@@ -38,6 +38,6 @@ module.exports = {
 
         console.log('myVoiceChannels', myVoiceChannels);
 
-        await interaction.reply(`joining: ${voiceChannel.name}`);
+        await interaction.reply(`Joining: ${voiceChannel.name}`);
     }
 };

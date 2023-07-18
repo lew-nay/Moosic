@@ -1,5 +1,5 @@
 const { createAudioPlayer, NoSubscriberBehavior, createAudioResource } = require('@discordjs/voice');
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { SpotifyExtractor, YoutubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor');
 const { Client, GatewayIntentBits, GuildVoiceStates } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
@@ -21,7 +21,7 @@ module.exports = {
         )
         .addStringOption(option =>
 		    option.setName('engine')
-                .setDescription('The platform to search on')
+                .setDescription('the platform to search on')
                 .addChoices(
                     { name: 'Youtube', value: `ext:${YoutubeExtractor.identifier}` },
                     { name: 'Spotify', value: `ext:${SpotifyExtractor.identifier}` },
@@ -33,7 +33,7 @@ module.exports = {
         await interaction.deferReply();
 
         if(!interaction.member.voice.channel){
-            return interaction.followUp('you are not connected to a voice channel');
+            return interaction.followUp('You are not connected to a voice channel');
         }
 
         if(!myVoiceChannels[interaction.guild.id]){
@@ -47,7 +47,7 @@ module.exports = {
         
             myVoiceChannels[interaction.guild.id] = voiceChannel;
 
-            await interaction.followUp(`joining: ${voiceChannel.name}`);
+            await interaction.followUp(`Joining: ${voiceChannel.name}`);
         }
 
         const query = interaction.options.getString('query');
@@ -60,15 +60,15 @@ module.exports = {
         try {
             const{ track } = await player.play(channel, query, {
                 nodeOptions: {
-                    metadata: interaction
+                    metadata: interaction.channel
                 },
                 searchEngine: engine
             });
-            return interaction.followUp(`**${track.title}** enqueued`);
+            return interaction.followUp(`${track.title} - ${track.author} enqueued`);
 
         }
         catch(e){
-            return interaction.followUp(`something went wrong: ${e}`);
+            return interaction.followUp(`Something went wrong: ${e}`);
         }
     }
 };

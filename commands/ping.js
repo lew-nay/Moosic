@@ -8,6 +8,6 @@ module.exports = {
      * @param {CommandInteraction} interaction
      */
     execute: async (interaction) => {
-        await interaction.reply('pong from correct file');
+        await interaction.reply('Pong');
     }
 };

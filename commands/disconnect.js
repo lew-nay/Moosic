@@ -10,12 +10,12 @@ module.exports = {
     execute: async (interaction) => {
         const channel = myVoiceChannels[interaction.guild.id];
         
-        if (!channel) return interaction.reply('not connected to a channel');
+        if (!channel) return interaction.reply('Not connected to a channel');
 
         const connection = getVoiceConnection(interaction.guild.id);
         connection.destroy();
 
-        await interaction.reply(`disconnecting from: ${channel.name}`)
+        await interaction.reply(`Disconnecting from: ${channel.name}`)
         delete myVoiceChannels[interaction.guild.id];
     }
 }

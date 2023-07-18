@@ -1,17 +1,21 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { useQueue } = require("discord-player");
-const { myVoiceChannels } = require('../voiceChannels.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('queue')
-        .setDescription('shows currently enqueued songs'),
+        .setDescription('Shows currently enqueued songs'),
     
     execute: async (interaction) => {
         const queue = useQueue(interaction.guild.id);
+
+        if (!queue || queue.isEmpty()){
+            return interaction.reply("Queue is empty");
+        }
+
         const tracks = queue.tracks.toArray();
 
-        let bareString = "current queue: \n";
+        let bareString = "Current queue: \n";
 
         for (let i = 0; i < tracks.length && bareString.length < 1900; i++) {
             const track = tracks[i];

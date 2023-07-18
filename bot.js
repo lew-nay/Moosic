@@ -1,6 +1,6 @@
 const { botToken, clientId } = require('./config.js');
 
-const { Client, GatewayIntentBits, Message, SlashCommandBuilder, REST, Routes, Events } = require("discord.js") //classes capitalised
+const { Client, GatewayIntentBits, Message, SlashCommandBuilder, REST, Routes, Events, EmbedBuilder } = require("discord.js") //classes capitalised
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
 const { Player } = require('discord-player');
 const player = new Player(client);
@@ -11,6 +11,7 @@ const disconnectImport = require('./commands/disconnect.js');
 const playImport = require('./commands/play.js');
 const queueImport = require('./commands/queue.js');
 const skipImport = require('./commands/skip.js');
+const clearImport = require('./commands/clear.js');
 
 player.on('debug', async (message) => {
     // Emitted when the player sends debug info
@@ -23,6 +24,16 @@ player.events.on('debug', async (queue, message) => {
     // Useful for seeing what state the current queue is at
     console.log(`Player debug event: ${message}`);
 });
+
+player.events.on('playerStart', async (queue, track) => {
+    const trackEmbed = new EmbedBuilder()
+        .setTitle(track.title)
+        .setAuthor(track.author)
+        .setThumbnail(track.thumbnail)
+        .setDescription("now playing");
+    
+    channel.send({ embeds: [trackEmbed]});
+})
 
 //Events.InteractionCreate - static is better ;)
 client.on(Events.InteractionCreate, async interaction => {
@@ -48,6 +59,10 @@ client.on(Events.InteractionCreate, async interaction => {
             break;
         case 'skip':
             skipImport.execute(interaction);
+            break;
+        case 'clear':
+            clearImport.execute(interaction);
+            break;
     }
 });
 
