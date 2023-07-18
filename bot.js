@@ -2,7 +2,10 @@ const { botToken, clientId } = require('./config.js');
 
 const { Client, GatewayIntentBits, Message, SlashCommandBuilder, REST, Routes, Events, EmbedBuilder } = require("discord.js") //classes capitalised
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
+
+
 const { Player } = require('discord-player');
+
 const player = new Player(client);
 
 const pingImport = require("./commands/ping.js");
@@ -28,11 +31,11 @@ player.events.on('debug', async (queue, message) => {
 player.events.on('playerStart', async (queue, track) => {
     const trackEmbed = new EmbedBuilder()
         .setTitle(track.title)
-        .setAuthor(track.author)
+        .setAuthor({name: 'Now playing:'})
         .setThumbnail(track.thumbnail)
-        .setDescription("now playing");
+        .setDescription(track.author);
     
-    channel.send({ embeds: [trackEmbed]});
+    queue.metadata.send({ embeds: [trackEmbed]});
 })
 
 //Events.InteractionCreate - static is better ;)

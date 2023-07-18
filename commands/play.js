@@ -60,7 +60,7 @@ module.exports = {
         try {
             const{ track } = await player.play(channel, query, {
                 nodeOptions: {
-                    metadata: interaction.channel
+                    metadata: interaction.channel //metadata is what gets passed into the events
                 },
                 searchEngine: engine
             });
