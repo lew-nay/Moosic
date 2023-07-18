@@ -11,6 +11,7 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.MessageContent // new privledge intent
 	],
 });
 
@@ -25,6 +26,8 @@ import playImport from "./commands/play";
 import queueImport from "./commands/queue";
 import skipImport from "./commands/skip";
 import clearImport from "./commands/clear";
+
+const BOT_PREFIX = "!moo";
 
 player.on("debug", async (message) => {
 	// Emitted when the player sends debug info
@@ -49,6 +52,31 @@ player.events.on("playerStart", async (queue, track) => {
 	queue.metadata.send({ embeds: [trackEmbed] });
 });
 
+client.on(Events.MessageCreate, async (message) => {
+	const content = message.content;
+
+	if (!content.startsWith(BOT_PREFIX)) return;
+
+	// Splits the string by whitespace, first element will always be the prefix
+	// so ignore it. Next one will always be the "command name".
+	// The rest will be the arguments to pass to the handler.
+	const [_, commandType, ...restArgs] = content.split(/[ ]+/);
+
+	// fetch the channel this came from to get the full channel 
+	await message.channel.fetch();
+
+	console.log("commandType and restArgs together", commandType, restArgs);
+
+	switch (commandType.toLowerCase()) {
+		case "join": 
+			joinImport.textHandler(message, restArgs);
+			break;
+		default:
+			message.reply("Command not found");
+		return;
+	};
+});
+
 //Events.InteractionCreate - static is better ;)
 client.on(Events.InteractionCreate, async (interaction) => {
 	console.log("interactCreateEvent", interaction);
@@ -59,7 +87,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			pingImport.execute(interaction);
 			break;
 		case "join":
-			joinImport.execute(interaction);
+			joinImport.slashHandler(interaction);
 			break;
 		case "disconnect":
 			disconnectImport.execute(interaction);
