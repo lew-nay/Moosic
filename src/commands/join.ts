@@ -1,8 +1,28 @@
-import { SlashCommandBuilder, ChannelType, CommandInteraction, Channel } from 'discord.js';
+import { SlashCommandBuilder, ChannelType, CommandInteraction, Channel, VoiceChannel, ChatInputCommandInteraction, CacheType, Guild, Message } from 'discord.js';
 import { joinVoiceChannel, VoiceConnectionStatus } from '@discordjs/voice';
 import { myVoiceChannels } from '../voiceChannels';
 
+// We use the internal reply function of the interaction to type the replyFunction correctly.
+// This means our version can also accept embeds, options etc.
+type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
+// The base function and all the core logic that the handlers
+// will fill in. This is not exported as it is not used "raw". (although it could be)
+// Takes in a "reply" function that is used to reply, this could either be the interaction.reply function 
+// or the channel that the "text" version was sent in.
+const join = async (channelToJoin: VoiceChannel, guild: Guild, reply: ReplyFunction) => {
+    const voiceConnection = joinVoiceChannel({
+        channelId: channelToJoin.id,
+        guildId: guild.id,
+        adapterCreator: guild.voiceAdapterCreator,
+    });
+
+    myVoiceChannels[guild.id] = channelToJoin;
+
+    console.log('myVoiceChannels', myVoiceChannels);
+
+    await reply(`Joining: ${channelToJoin.name}`);
+}
 
 export const data = new SlashCommandBuilder()
     .setName('join')
@@ -14,20 +34,24 @@ export const data = new SlashCommandBuilder()
         .setRequired(true)
         .addChannelTypes(ChannelType.GuildVoice));
 
-export const execute = async (interaction) => {
-
-    const voiceChannel = interaction.options.getChannel('channel');
-    const voiceConnection = joinVoiceChannel({
-        channelId: voiceChannel.id,
-        guildId: interaction.guildId,
-        adapterCreator: interaction.guild.voiceAdapterCreator,
-    });
-
-    myVoiceChannels[interaction.guild.id] = voiceChannel;
-
-    console.log('myVoiceChannels', myVoiceChannels);
-
-    await interaction.reply(`Joining: ${voiceChannel.name}`);
+export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+    const voiceChannel = interaction.options.getChannel('channel') as VoiceChannel;
+    
+    // Must "bind" the message otherwise it crashes (don't know why).
+    await join(voiceChannel, interaction.guild!, interaction.reply.bind(interaction));
 }
 
-export default {data, execute}
+export const textHandler = async (message: Message, args: string[]) => {
+    const channelName = args[0];
+
+    // Find a related channel by name and is voice in the guild cache.
+    const cachedChannel = message.guild!.channels.cache.find(channel => channel.name.toLowerCase() === channelName.toLowerCase() 
+        && channel.type === ChannelType.GuildVoice)
+
+    if (!cachedChannel) return message.reply(`Channel ${channelName} not found`);
+
+    // Must "bind" the message otherwise it crashes (don't know why).
+    await join(cachedChannel as VoiceChannel, message.guild!, message.reply.bind(message));
+}
+
+export default { data, slashHandler, textHandler }
