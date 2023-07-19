@@ -3,24 +3,42 @@ import {
 	CommandInteraction,
 	Channel,
 	ChannelType,
-} from "discord.js";
+	Message,
+	VoiceChannel,
+	Guild,
+	ChatInputCommandInteraction,
+	CacheType
+	} from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import { myVoiceChannels } from "../voiceChannels";
+
+type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
+
+const disconnect = async (guild: Guild, reply: ReplyFunction) => {
+	
+	const channel = myVoiceChannels[guild.id];
+
+	const connection = getVoiceConnection(channel.guild.id);
+	connection?.destroy();
+
+	await reply(`Disconnecting from: ${channel.name}`);
+	delete myVoiceChannels[guild.id];
+}
 
 export const data = new SlashCommandBuilder()
 	.setName("disconnect")
 	.setDescription("Moosic disconnects from voice channel");
 
-export const execute = async (interaction) => {
-	const channel = myVoiceChannels[interaction.guild.id];
+export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+	await disconnect(interaction.guild!, interaction.reply.bind(interaction));
+}
 
-	if (!channel) return interaction.reply("Not connected to a channel");
+export const textHandler = async (message: Message) => {
+	const cachedChannel = message.guild!.channels.cache.find(channel => channel.name?.toLowerCase());
 
-	const connection = getVoiceConnection(interaction.guild.id);
-	connection?.destroy();
+	if (!cachedChannel) return message.reply('Not connected to a channel');
 
-	await interaction.reply(`Disconnecting from: ${channel.name}`);
-	delete myVoiceChannels[interaction.guild.id];
-};
+	await disconnect(message.guild!, message.reply.bind(message));
+}
 
-export default {data, execute}
+export default {data, slashHandler, textHandler}

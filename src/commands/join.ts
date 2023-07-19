@@ -1,4 +1,14 @@
-import { SlashCommandBuilder, ChannelType, CommandInteraction, Channel, VoiceChannel, ChatInputCommandInteraction, CacheType, Guild, Message } from 'discord.js';
+import { 
+        SlashCommandBuilder, 
+        ChannelType, 
+        CommandInteraction, 
+        Channel, 
+        VoiceChannel, 
+        ChatInputCommandInteraction, 
+        CacheType, 
+        Guild, 
+        Message 
+    } from 'discord.js';
 import { joinVoiceChannel, VoiceConnectionStatus } from '@discordjs/voice';
 import { myVoiceChannels } from '../voiceChannels';
 
@@ -44,9 +54,11 @@ export const slashHandler = async (interaction: ChatInputCommandInteraction<Cach
 export const textHandler = async (message: Message, args: string[]) => {
     const channelName = args[0];
 
+    if (!channelName) return message.reply("Please enter a channel to join");
+
     // Find a related channel by name and is voice in the guild cache.
-    const cachedChannel = message.guild!.channels.cache.find(channel => channel.name.toLowerCase() === channelName.toLowerCase() 
-        && channel.type === ChannelType.GuildVoice)
+    const cachedChannel = message.guild!.channels.cache.find(channel => channel.name?.toLowerCase() === channelName?.toLowerCase() 
+        && channel.type === ChannelType.GuildVoice);
 
     if (!cachedChannel) return message.reply(`Channel ${channelName} not found`);
 

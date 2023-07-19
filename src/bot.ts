@@ -27,7 +27,7 @@ import queueImport from "./commands/queue";
 import skipImport from "./commands/skip";
 import clearImport from "./commands/clear";
 
-const BOT_PREFIX = "!moo";
+const BOT_PREFIX = "+";
 
 player.on("debug", async (message) => {
 	// Emitted when the player sends debug info
@@ -57,10 +57,10 @@ client.on(Events.MessageCreate, async (message) => {
 
 	if (!content.startsWith(BOT_PREFIX)) return;
 
-	// Splits the string by whitespace, first element will always be the prefix
-	// so ignore it. Next one will always be the "command name".
+	// Splits the string by whitespace
+	// first element will always be the "command name".
 	// The rest will be the arguments to pass to the handler.
-	const [_, commandType, ...restArgs] = content.split(/[ ]+/);
+	const [commandType, ...restArgs] = content.split(/[ ]+/);
 
 	// fetch the channel this came from to get the full channel 
 	await message.channel.fetch();
@@ -68,8 +68,11 @@ client.on(Events.MessageCreate, async (message) => {
 	console.log("commandType and restArgs together", commandType, restArgs);
 
 	switch (commandType.toLowerCase()) {
-		case "join": 
+		case `${BOT_PREFIX}join`: 
 			joinImport.textHandler(message, restArgs);
+			break;
+		case `${BOT_PREFIX}disconnect`:
+			disconnectImport.textHandler(message);
 			break;
 		default:
 			message.reply("Command not found");
@@ -90,7 +93,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			joinImport.slashHandler(interaction);
 			break;
 		case "disconnect":
-			disconnectImport.execute(interaction);
+			disconnectImport.slashHandler(interaction);
 			break;
 		case "play":
 			playImport.execute(interaction, client, player);
