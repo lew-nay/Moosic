@@ -1,5 +1,12 @@
 
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { 
+	SlashCommandBuilder, 
+	EmbedBuilder,
+	Message,
+	Guild,
+	CacheType,
+	CommandInteraction
+	} from "discord.js";
 import {
 	SpotifyExtractor,
 	YoutubeExtractor,
@@ -7,6 +14,32 @@ import {
 } from "@discord-player/extractor";
 import { joinVoiceChannel } from "@discordjs/voice";
 import { myVoiceChannels } from "../voiceChannels";
+
+type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
+
+const play = async (guild: Guild, reply: ReplyFunction, message) => {
+	await message.deferReply();
+
+	if (!message.member.voice.channel){
+		return message.followUp('You are not connected to a voice channel')
+	};
+
+	if (!myVoiceChannels[guild.id]){
+		const voiceChannel = message.member.voice.channel;
+
+		const voiceConnection = joinVoiceChannel({
+			channelId: message.member.guild.id,
+			guildId: message.guildId,
+			adapterCreator: message.guild.voiceAdapterCreator,
+		});
+
+		myVoiceChannels[guild.id] = voiceChannel;
+
+		await message.followUp(`Joining: ${voiceChannel.name}`);
+	}
+
+	//const query = 
+}
 
 export const data = new SlashCommandBuilder()
 	.setName("play")

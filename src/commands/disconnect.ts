@@ -1,10 +1,7 @@
 import {
 	SlashCommandBuilder,
 	CommandInteraction,
-	Channel,
-	ChannelType,
 	Message,
-	VoiceChannel,
 	Guild,
 	ChatInputCommandInteraction,
 	CacheType

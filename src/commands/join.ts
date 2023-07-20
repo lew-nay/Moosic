@@ -1,15 +1,14 @@
 import { 
         SlashCommandBuilder, 
         ChannelType, 
-        CommandInteraction, 
-        Channel, 
+        CommandInteraction,  
         VoiceChannel, 
         ChatInputCommandInteraction, 
         CacheType, 
         Guild, 
         Message 
     } from 'discord.js';
-import { joinVoiceChannel, VoiceConnectionStatus } from '@discordjs/voice';
+import { joinVoiceChannel } from '@discordjs/voice';
 import { myVoiceChannels } from '../voiceChannels';
 
 // We use the internal reply function of the interaction to type the replyFunction correctly.

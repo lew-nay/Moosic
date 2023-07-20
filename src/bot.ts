@@ -1,4 +1,4 @@
-import { botToken, clientId } from "./config";
+import { botToken } from "./config";
 
 import {
 	Client,
