@@ -74,6 +74,8 @@ client.on(Events.MessageCreate, async (message) => {
 		case `${BOT_PREFIX}disconnect`:
 			disconnectImport.textHandler(message);
 			break;
+		case `${BOT_PREFIX}play`:
+			playImport.textHandler(message, restArgs);
 		default:
 			message.reply("Command not found");
 		return;
@@ -96,7 +98,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			disconnectImport.slashHandler(interaction);
 			break;
 		case "play":
-			playImport.execute(interaction, client, player);
+			playImport.slashHandler(interaction, player);
 			break;
 		case "queue":
 			queueImport.execute(interaction);
