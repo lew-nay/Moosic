@@ -12,6 +12,7 @@ import {
 	Interaction,
 	GuildMember,
 	VoiceBasedChannel,
+	TextChannel,
 	} from "discord.js";
 import {
 	SpotifyExtractor,
@@ -25,14 +26,14 @@ import { Player } from "discord-player";
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
 // im going  to remove message as arguement so errors can show where needs fix
-const play = async (channelToJoin: VoiceBasedChannel | null, guild: Guild, reply: ReplyFunction, player: Player, query: string, engine?: string) => {
+const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction, player: Player, query: string, engine?: string) => {
 
 	// Check if the bot is in a channel already in this guild
 	if (!myVoiceChannels[guild.id] || myVoiceChannels[guild.id] !== channelToJoin){
 		
 		if (!channelToJoin) {
 			// error here "you are not in a channel etc".
-			await reply("join voice channel first idot");
+			await reply("You are not in a voice channel");
 			return;
 		}
 	
@@ -53,14 +54,20 @@ const play = async (channelToJoin: VoiceBasedChannel | null, guild: Guild, reply
 	try {
 		const { track } = await player.play(channelToJoin, query, {
 			nodeOptions: {
-				metadata: channelToJoin, //metadata is what gets passed into the events
+				metadata: messageChannel, //metadata is what gets passed into the events
 			},
 			searchEngine: engine as any,
 		});
-		await reply(
-			`${track.title} - ${track.author} enqueued`,
-		);
-	} catch (e) {
+		const playEmbed = new EmbedBuilder()
+				.setTitle(track.title)
+				.setAuthor({name: 'Enqueued:'})
+				.setThumbnail(track.thumbnail)
+				.setDescription(track.author);
+
+	await reply({embeds: [playEmbed]});
+	} 
+	catch (e) 
+		{
 		await reply(`Something went wrong: ${e}`);
 	}
 }
@@ -72,37 +79,24 @@ export const slashHandler = async (interaction: ChatInputCommandInteraction<Cach
 	// our engine is string | null
 
 	const member = interaction.member as GuildMember;
-
 	const channel = member.voice.channel;
+	const textChannel = interaction.channel as TextChannel;
 
 	await interaction.deferReply();
 
-	await play(channel, interaction.guild!, interaction.followUp.bind(interaction) as ReplyFunction, player, query!, engine ?? undefined);
+	await play(channel, textChannel, interaction.guild!, interaction.followUp.bind(interaction) as ReplyFunction, player, query!, engine ?? undefined);
 }
 
-export const textHandler = async (message: Message, args: string[]) => {
+export const textHandler = async (message: Message, args: string[], player) => {
 	const query = args[0];
-	const platform = args[1];
+	const engine = args[1];
 
-	if (!message.member!.voice.channel){
-		return(message.reply('You are not in a voice channel'))
-	}
+	const channel = message.member!.voice.channel;
+	const textChannel = message.channel as TextChannel;
+
+	await play(channel, textChannel, message.guild!, message.reply.bind(message), player, query!, engine ?? undefined);
 
 	
-
-	// if (!myVoiceChannels[guild.id]){
-	// 	const voiceChannel = message.member!.voice.channel;
-
-	// 	const voiceConnection = joinVoiceChannel({
-	// 		channelId: message.member!.guild.id,
-	// 		guildId: message.guildId,
-	// 		adapterCreator: message.guild!.voiceAdapterCreator,
-	// 	});
-
-	// 	myVoiceChannels[guild.id] = voiceChannel;
-
-	// 	await message.reply(`Joining: ${voiceChannel.name}`);
-	// }
 }
 
 export const data = new SlashCommandBuilder()

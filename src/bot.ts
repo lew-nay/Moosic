@@ -61,6 +61,7 @@ client.on(Events.MessageCreate, async (message) => {
 	// first element will always be the "command name".
 	// The rest will be the arguments to pass to the handler.
 	const [commandType, ...restArgs] = content.split(/[ ]+/);
+	restArgs.join();
 
 	// fetch the channel this came from to get the full channel 
 	await message.channel.fetch();
@@ -75,7 +76,8 @@ client.on(Events.MessageCreate, async (message) => {
 			disconnectImport.textHandler(message);
 			break;
 		case `${BOT_PREFIX}play`:
-			playImport.textHandler(message, restArgs);
+			playImport.textHandler(message, restArgs, player);
+			break;
 		default:
 			message.reply("Command not found");
 		return;
