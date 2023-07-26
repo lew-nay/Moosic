@@ -26,6 +26,8 @@ import playImport from "./commands/play";
 import queueImport from "./commands/queue";
 import skipImport from "./commands/skip";
 import clearImport from "./commands/clear";
+import removeImport from "./commands/remove";
+import remove from "./commands/remove";
 
 const BOT_PREFIX = "+";
 
@@ -61,8 +63,7 @@ client.on(Events.MessageCreate, async (message) => {
 	// first element will always be the "command name".
 	// The rest will be the arguments to pass to the handler.
 	const [commandType, ...restArgs] = content.split(/[ ]+/);
-	restArgs.join();
-
+	
 	// fetch the channel this came from to get the full channel 
 	await message.channel.fetch();
 
@@ -77,6 +78,18 @@ client.on(Events.MessageCreate, async (message) => {
 			break;
 		case `${BOT_PREFIX}play`:
 			playImport.textHandler(message, restArgs, player);
+			break;
+		case `${BOT_PREFIX}queue`:
+			queueImport.textHandler(message);
+			break;
+		case `${BOT_PREFIX}skip`:
+			skipImport.textHandler(message);
+			break;
+		case `${BOT_PREFIX}clear`:
+			clearImport.textHandler(message);
+			break;
+		case `${BOT_PREFIX}remove`:
+			removeImport.textHandler(message, restArgs);
 			break;
 		default:
 			message.reply("Command not found");
@@ -103,13 +116,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			playImport.slashHandler(interaction, player);
 			break;
 		case "queue":
-			queueImport.execute(interaction);
+			queueImport.slashHandler(interaction);
 			break;
 		case "skip":
-			skipImport.execute(interaction);
+			skipImport.slashHandler(interaction);
 			break;
 		case "clear":
-			clearImport.execute(interaction);
+			clearImport.slashHandler(interaction);
+			break;
+		case "remove":
+			removeImport.slashHandler(interaction);
 			break;
 	}
 });

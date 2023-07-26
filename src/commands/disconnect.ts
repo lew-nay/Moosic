@@ -18,7 +18,7 @@ const disconnect = async (guild: Guild, reply: ReplyFunction) => {
 	const connection = getVoiceConnection(channel.guild.id);
 	connection?.destroy();
 
-	await reply(`Disconnecting from: ${channel.name}`);
+	await reply(`Disconnecting from: **${channel.name}**`);
 	delete myVoiceChannels[guild.id];
 }
 

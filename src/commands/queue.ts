@@ -1,28 +1,53 @@
-import { SlashCommandBuilder } from "discord.js";
+import { 
+	SlashCommandBuilder, 
+	EmbedBuilder,
+	Message,
+	Guild,
+	CacheType,
+	CommandInteraction,
+	ChatInputCommandInteraction,
+	TextChannel,
+	} from "discord.js";
 import { useQueue } from "discord-player";
 
-export const data = new SlashCommandBuilder()
-	.setName("queue")
-	.setDescription("Shows currently enqueued songs");
+type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
-export const execute = async (interaction) => {
-	const queue = useQueue(interaction.guild.id);
+const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
+	const queue = useQueue(guild.id);
 
-	if (!queue || queue.isEmpty()) {
-		return interaction.reply("Queue is empty");
+	if (!queue || queue.isEmpty()){
+		return reply("Queue is empty");
 	}
 
 	const tracks = queue.tracks.toArray();
 
 	let bareString = "Current queue: \n";
 
-	for (let i = 0; i < tracks.length && bareString.length < 1900; i++) {
+	for (let i = 0; i < tracks.length && 50; i++){
 		const track = tracks[i];
-		bareString += `[${i}] ${track.title} - ${track.author}\n`;
+		bareString += `**[${i+1}]:** ${track.title} - ${track.author}\n`;
 	}
 
-	await interaction.reply(bareString);
-};
+	await reply(bareString);
+}
+
+export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+	const channel = interaction.channel as TextChannel;
+
+	await interaction.deferReply();
+	
+	await viewQueue(channel, interaction.guild!, interaction.followUp.bind(interaction) as ReplyFunction);
+}
+
+export const textHandler = async (message: Message) => {
+	const channel = message.channel as TextChannel;
+
+	await viewQueue(channel, message.guild!, message.reply.bind(message));
+}
+
+export const data = new SlashCommandBuilder()
+	.setName("queue")
+	.setDescription("Shows currently enqueued songs");
 
 
-export default {data, execute}
+export default {data, slashHandler, textHandler}

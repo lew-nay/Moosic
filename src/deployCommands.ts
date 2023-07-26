@@ -6,6 +6,7 @@ import playImport from "./commands/play";
 import skipImport from "./commands/skip";
 import queueImport from "./commands/queue";
 import clearImport from "./commands/clear";
+import removeImport from "./commands/remove";
 import { REST, Routes } from "discord.js"; //classes capitalised
 
 //sets up the slash commands
@@ -18,6 +19,7 @@ async function setupCommands() {
 		skipImport.data,
 		queueImport.data,
 		clearImport.data,
+		removeImport.data,
 	];
 
 	//idk what this actually does, was in the example, doesn't work without it

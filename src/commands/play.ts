@@ -88,13 +88,12 @@ export const slashHandler = async (interaction: ChatInputCommandInteraction<Cach
 }
 
 export const textHandler = async (message: Message, args: string[], player) => {
-	const query = args[0];
-	const engine = args[1];
+	const query = args.join();
 
 	const channel = message.member!.voice.channel;
 	const textChannel = message.channel as TextChannel;
 
-	await play(channel, textChannel, message.guild!, message.reply.bind(message), player, query!, engine ?? undefined);
+	await play(channel, textChannel, message.guild!, message.reply.bind(message), player, query!);
 
 	
 }
@@ -127,48 +126,5 @@ export const data = new SlashCommandBuilder()
 				},
 			),
 	);
-
-// export const execute = async (interaction, client, player) => {
-// 	await interaction.deferReply();
-
-// 	if (!interaction.member.voice.channel) {
-// 		return interaction.followUp("You are not connected to a voice channel");
-// 	}
-
-// 	if (!myVoiceChannels[interaction.guild.id]) {
-// 		const voiceChannel = interaction.member.voice.channel;
-
-// 		const voiceConnection = joinVoiceChannel({
-// 			channelId: interaction.member.guild.id,
-// 			guildId: interaction.guildId,
-// 			adapterCreator: interaction.guild.voiceAdapterCreator,
-// 		});
-
-// 		myVoiceChannels[interaction.guild.id] = voiceChannel;
-
-// 		await interaction.followUp(`Joining: ${voiceChannel.name}`);
-// 	}
-
-// 	const query = interaction.options.getString("query");
-// 	const engine = interaction.options.getString("engine");
-
-// 	const channel = myVoiceChannels[interaction.guild.id];
-
-// 	await player.extractors.loadDefault();
-
-// 	try {
-// 		const { track } = await player.play(channel, query, {
-// 			nodeOptions: {
-// 				metadata: interaction.channel, //metadata is what gets passed into the events
-// 			},
-// 			searchEngine: engine,
-// 		});
-// 		return interaction.followUp(
-// 			`${track.title} - ${track.author} enqueued`,
-// 		);
-// 	} catch (e) {
-// 		return interaction.followUp(`Something went wrong: ${e}`);
-// 	}
-// };
 
 export default {data, slashHandler, textHandler}

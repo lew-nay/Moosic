@@ -30,7 +30,7 @@ const join = async (channelToJoin: VoiceChannel, guild: Guild, reply: ReplyFunct
 
     console.log('myVoiceChannels', myVoiceChannels);
 
-    await reply(`Joining: ${channelToJoin.name}`);
+    await reply(`Joining: **${channelToJoin.name}**`);
 }
 
 export const data = new SlashCommandBuilder()
