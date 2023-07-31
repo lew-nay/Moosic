@@ -23,7 +23,7 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 
 	let bareString = "Current queue: \n";
 
-	for (let i = 0; i < tracks.length && 50; i++){
+	for (let i = 0; i < 50 && tracks.length; i++){
 		const track = tracks[i];
 		bareString += `**[${i+1}]:** ${track.title} - ${track.author}\n`;
 	}
