@@ -18,7 +18,7 @@ const skip = async(messageChannel: TextChannel | null, guild: Guild, reply: Repl
 	queue?.node.skip();
 
 	if (!track) {
-		await reply('No track currently playing');
+		await reply('No track currently playing.');
 		return;
 	}
 

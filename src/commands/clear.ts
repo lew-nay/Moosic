@@ -17,7 +17,7 @@ const clearQueue = async(messageChannel: TextChannel | null, guild: Guild, reply
 	const queue = useQueue(guild.id);
 	queue?.clear();
 
-	await reply('Queue cleared');
+	await reply('Queue cleared.');
 }
 
 export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {

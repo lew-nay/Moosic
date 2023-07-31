@@ -30,7 +30,7 @@ const join = async (channelToJoin: VoiceChannel, guild: Guild, reply: ReplyFunct
 
     console.log('myVoiceChannels', myVoiceChannels);
 
-    await reply(`Joining: **${channelToJoin.name}**`);
+    await reply(`Joining: **${channelToJoin.name}**.`);
 }
 
 export const data = new SlashCommandBuilder()
@@ -53,13 +53,13 @@ export const slashHandler = async (interaction: ChatInputCommandInteraction<Cach
 export const textHandler = async (message: Message, args: string[]) => {
     const channelName = args[0];
 
-    if (!channelName) return message.reply("Please enter a channel to join");
+    if (!channelName) return message.reply("Please enter a channel to join.");
 
     // Find a related channel by name and is voice in the guild cache.
     const cachedChannel = message.guild!.channels.cache.find(channel => channel.name?.toLowerCase() === channelName?.toLowerCase() 
         && channel.type === ChannelType.GuildVoice);
 
-    if (!cachedChannel) return message.reply(`Channel ${channelName} not found`);
+    if (!cachedChannel) return message.reply(`Channel ${channelName} not found.`);
 
     // Must "bind" the message otherwise it crashes (don't know why).
     await join(cachedChannel as VoiceChannel, message.guild!, message.reply.bind(message));

@@ -21,7 +21,7 @@ import {
 } from "@discord-player/extractor";
 import { joinVoiceChannel } from "@discordjs/voice";
 import { myVoiceChannels } from "../voiceChannels";
-import { Player } from "discord-player";
+import { Player, useQueue } from "discord-player";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
@@ -33,7 +33,7 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 		
 		if (!channelToJoin) {
 			// error here "you are not in a channel etc".
-			await reply("You are not in a voice channel");
+			await reply("You are not in a voice channel.");
 			return;
 		}
 	
@@ -58,17 +58,34 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 			},
 			searchEngine: engine as any,
 		});
+
+		// const queue = useQueue(guild.id);
+		// const tracks = queue?.tracks.toArray();
+		// var trackNumber;
+
+		// if (!queue || queue.isEmpty()){
+		// 	trackNumber = 1;
+		// }
+		// else {
+		// 	trackNumber = tracks!.length + 1
+		// }
+		
+
+
 		const playEmbed = new EmbedBuilder()
 				.setTitle(track.title)
 				.setAuthor({name: 'Enqueued:'})
 				.setThumbnail(track.thumbnail)
-				.setDescription(track.author);
+				.setDescription(track.author)
+				//.addFields(
+				//	{ name: 'Queue position:', value: trackNumber}
+				//);
 
 	await reply({embeds: [playEmbed]});
 	} 
 	catch (e) 
 		{
-		await reply(`Something went wrong: ${e}`);
+		await reply(`Something went wrong: ${e}.`);
 	}
 }
 

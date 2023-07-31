@@ -17,10 +17,14 @@ const remove = async(messageChannel: TextChannel | null, trackNumber, guild: Gui
     const tracks = queue?.tracks.toArray();
     
     if (!queue || queue.isEmpty()){
-        return reply('Queue is empty');
+        return reply('Queue is empty.');
     }
 
     const track = tracks![trackNumber-1];
+
+    if (tracks!.length < trackNumber){
+        return reply('Track not found.');
+    }
     
     const removeEmbed = new EmbedBuilder()
             .setTitle(track.title)

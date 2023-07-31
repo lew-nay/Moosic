@@ -16,7 +16,7 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 	const queue = useQueue(guild.id);
 
 	if (!queue || queue.isEmpty()){
-		return reply("Queue is empty");
+		return reply("Queue is empty.");
 	}
 
 	const tracks = queue.tracks.toArray();

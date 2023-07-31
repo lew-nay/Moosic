@@ -18,7 +18,7 @@ const disconnect = async (guild: Guild, reply: ReplyFunction) => {
 	const connection = getVoiceConnection(channel.guild.id);
 	connection?.destroy();
 
-	await reply(`Disconnecting from: **${channel.name}**`);
+	await reply(`Disconnecting from: **${channel.name}**.`);
 	delete myVoiceChannels[guild.id];
 }
 
@@ -33,7 +33,7 @@ export const slashHandler = async (interaction: ChatInputCommandInteraction<Cach
 export const textHandler = async (message: Message) => {
 	const cachedChannel = message.guild!.channels.cache.find(channel => channel.name?.toLowerCase());
 
-	if (!cachedChannel) return message.reply('Not connected to a channel');
+	if (!cachedChannel) return message.reply('Not connected to a channel.');
 
 	await disconnect(message.guild!, message.reply.bind(message));
 }
