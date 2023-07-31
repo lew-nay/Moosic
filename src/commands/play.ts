@@ -7,9 +7,6 @@ import {
 	CacheType,
 	CommandInteraction,
 	ChatInputCommandInteraction,
-	VoiceChannel,
-	type Client,
-	Interaction,
 	GuildMember,
 	VoiceBasedChannel,
 	TextChannel,
@@ -59,33 +56,31 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 			searchEngine: engine as any,
 		});
 
-		// const queue = useQueue(guild.id);
-		// const tracks = queue?.tracks.toArray();
-		// var trackNumber;
-
-		// if (!queue || queue.isEmpty()){
-		// 	trackNumber = 1;
-		// }
-		// else {
-		// 	trackNumber = tracks!.length + 1
-		// }
+		const queue = useQueue(guild.id);
+		const tracks = queue?.tracks.toArray();
 		
+		let trackNumber: number;
 
+		if (!queue || queue.isEmpty()){
+			trackNumber = 1;
+		}
+		else {
+			trackNumber = tracks!.length;
+		}
 
 		const playEmbed = new EmbedBuilder()
 				.setTitle(track.title)
 				.setAuthor({name: 'Enqueued:'})
 				.setThumbnail(track.thumbnail)
 				.setDescription(track.author)
-				//.addFields(
-				//	{ name: 'Queue position:', value: trackNumber}
-				//);
+				.addFields({ name: 'Queue position:', value: trackNumber.toString() });
 
 	await reply({embeds: [playEmbed]});
 	} 
 	catch (e) 
 		{
 		await reply(`Something went wrong: ${e}.`);
+		console.log(e);
 	}
 }
 
@@ -111,8 +106,6 @@ export const textHandler = async (message: Message, args: string[], player) => {
 	const textChannel = message.channel as TextChannel;
 
 	await play(channel, textChannel, message.guild!, message.reply.bind(message), player, query!);
-
-	
 }
 
 export const data = new SlashCommandBuilder()

@@ -22,7 +22,7 @@ const remove = async(messageChannel: TextChannel | null, trackNumber, guild: Gui
 
     const track = tracks![trackNumber-1];
 
-    if (tracks!.length < trackNumber){
+    if (tracks!.length < trackNumber || trackNumber <= 0){
         return reply('Track not found.');
     }
     

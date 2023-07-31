@@ -1,5 +1,5 @@
-import { botToken } from "./config";
-
+import 'dotenv/config';
+import { botToken } from './config';
 import {
 	Client,
 	GatewayIntentBits,
@@ -27,7 +27,6 @@ import queueImport from "./commands/queue";
 import skipImport from "./commands/skip";
 import clearImport from "./commands/clear";
 import removeImport from "./commands/remove";
-import remove from "./commands/remove";
 
 const BOT_PREFIX = "+";
 
