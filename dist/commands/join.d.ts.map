@@ -1,0 +1,1 @@
+{"version":3,"file":"join.d.ts","sourceRoot":"","sources":["../../src/commands/join.ts"],"names":[],"mappings":"AAAA,OAAO,EACC,mBAAmB,EAInB,2BAA2B,EAC3B,SAAS,EAET,OAAO,EACV,MAAM,YAAY,CAAC;AA0BxB,eAAO,MAAM,IAAI,mEAQgC,CAAC;AAElD,eAAO,MAAM,YAAY,gBAAuB,4BAA4B,SAAS,CAAC,kBAKrF,CAAA;AAED,eAAO,MAAM,WAAW,YAAmB,OAAO,QAAQ,MAAM,EAAE,0CAajE,CAAA;;;;;;AAED,wBAAkD"}
