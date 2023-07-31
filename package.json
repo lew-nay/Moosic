@@ -1,13 +1,13 @@
 {
 	"name": "moosic",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "",
 	"main": "dist/index.js",
 	"scripts": {
 		"dev": "nodemon ./src/bot.ts",
 		"commands:deploy": "tsc && node dist/deployCommands.js",
 		"start": "node dist/bot.js",
-		"build": "tsc"
+		"build": "npm install && tsc"
 	},
 	"author": "",
 	"license": "ISC",
