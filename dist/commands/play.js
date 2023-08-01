@@ -38,7 +38,7 @@ const play = (channelToJoin, messageChannel, guild, reply, player, query, engine
         const { track } = yield player.play(channelToJoin, query, {
             nodeOptions: {
                 metadata: messageChannel,
-                resampler: 6400,
+                resampler: 3200,
             },
             searchEngine: engine,
             audioPlayerOptions: {
