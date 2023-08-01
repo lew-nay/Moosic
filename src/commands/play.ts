@@ -52,7 +52,7 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 		const { track } = await player.play(channelToJoin, query, {
 			nodeOptions: {
 				metadata: messageChannel, //metadata is what gets passed into the events,
-				resampler: 24000,
+				resampler: 6400,
 			},
 			searchEngine: engine as any,
 			audioPlayerOptions: {
