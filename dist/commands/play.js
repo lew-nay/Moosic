@@ -37,9 +37,13 @@ const play = (channelToJoin, messageChannel, guild, reply, player, query, engine
     try {
         const { track } = yield player.play(channelToJoin, query, {
             nodeOptions: {
-                metadata: messageChannel, //metadata is what gets passed into the events
+                metadata: messageChannel,
+                resampler: 24000,
             },
             searchEngine: engine,
+            audioPlayerOptions: {
+                transitionMode: true,
+            },
         });
         const queue = (0, discord_player_1.useQueue)(guild.id);
         const tracks = queue === null || queue === void 0 ? void 0 : queue.tracks.toArray();

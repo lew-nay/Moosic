@@ -51,9 +51,13 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 	try {
 		const { track } = await player.play(channelToJoin, query, {
 			nodeOptions: {
-				metadata: messageChannel, //metadata is what gets passed into the events
+				metadata: messageChannel, //metadata is what gets passed into the events,
+				resampler: 24000,
 			},
 			searchEngine: engine as any,
+			audioPlayerOptions: {
+				transitionMode: true,
+			},
 		});
 
 		const queue = useQueue(guild.id);

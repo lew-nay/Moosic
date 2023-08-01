@@ -19,7 +19,7 @@ const viewQueue = (messageChannel, guild, reply) => __awaiter(void 0, void 0, vo
     }
     const tracks = queue.tracks.toArray();
     let bareString = "Current queue: \n";
-    for (let i = 0; i < tracks.length && 50; i++) {
+    for (let i = 0; i < 50 && tracks.length; i++) {
         const track = tracks[i];
         bareString += `**[${i + 1}]:** ${track.title} - ${track.author}\n`;
     }

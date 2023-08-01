@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clientId = exports.botToken = void 0;
+require("dotenv/config");
 exports.botToken = process.env.BOT_TOKEN;
 exports.clientId = process.env.CLIENT_ID;
 exports.default = {

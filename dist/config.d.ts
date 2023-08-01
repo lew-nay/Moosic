@@ -1,3 +1,4 @@
+import 'dotenv/config';
 export declare const botToken: string;
 export declare const clientId: string;
 declare const _default: {
