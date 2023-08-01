@@ -20,7 +20,9 @@
 		"discord-player": "^6.6.1",
 		"discord.js": "^14.11.0",
 		"dotenv": "^16.3.1",
+		"ffmpeg-static": "^5.1.0",
 		"libsodium-wrappers": "^0.7.11",
+		"opusscript": "^0.0.8",
 		"youtube-api": "^3.0.1",
 		"ytdl-core": "^4.11.5"
 	},
@@ -32,5 +34,5 @@
 	},
 	"engines": {
 		"node": "16.x"
-	  }
+	}
 }
