@@ -8,7 +8,7 @@
 		"commands:deploy": "node dist/deployCommands.js",
 		"start": "node dist/bot.js",
 		"build": "npm install && tsc && npm run commands:deploy",
-		"deploy": "npm run build && npm run start"
+		"deploy": "npm run build"
 	},
 	"author": "",
 	"license": "ISC",
