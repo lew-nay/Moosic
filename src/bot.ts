@@ -27,6 +27,7 @@ import queueImport from "./commands/queue";
 import skipImport from "./commands/skip";
 import clearImport from "./commands/clear";
 import removeImport from "./commands/remove";
+import shuffleImport from "./commands/shuffle";
 
 const BOT_PREFIX = "+";
 
@@ -90,6 +91,9 @@ client.on(Events.MessageCreate, async (message) => {
 		case `${BOT_PREFIX}remove`:
 			removeImport.textHandler(message, restArgs);
 			break;
+		case `${BOT_PREFIX}shuffle`:
+			shuffleImport.textHandler(message);
+			break;
 		default:
 			message.reply("Command not found");
 		return;
@@ -125,6 +129,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			break;
 		case "remove":
 			removeImport.slashHandler(interaction);
+			break;
+		case "shuffle":
+			shuffleImport.slashHandler(interaction);
 			break;
 	}
 });
