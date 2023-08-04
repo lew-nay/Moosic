@@ -18,7 +18,7 @@ import {
 } from "@discord-player/extractor";
 import { joinVoiceChannel } from "@discordjs/voice";
 import { myVoiceChannels } from "../voiceChannels";
-import { Player, useQueue } from "discord-player";
+import { Player, useQueue, GuildQueuePlayerNode, GuildQueue } from "discord-player";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
@@ -59,17 +59,20 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 			},
 		});
 
-		const queue = useQueue(guild.id);
-		const tracks = queue?.tracks.toArray();
+		const queue = useQueue(guild.id) as GuildQueue;
 		
+		const numberingQueue = new GuildQueuePlayerNode(queue);
+
 		let trackNumber: number;
 
-		if (!queue || queue.isEmpty()){
-			trackNumber = 1;
-		}
-		else {
-			trackNumber = tracks!.length;
-		}
+		trackNumber = numberingQueue.getTrackPosition(track);
+
+		// if (!queue || queue.isEmpty()){
+		// 	trackNumber = 1;
+		// }
+		// else {
+		// 	trackNumber = tracks!.length;
+		// }
 
 		const playEmbed = new EmbedBuilder()
 				.setTitle(track.title)
