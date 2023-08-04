@@ -65,7 +65,7 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 
 		let trackNumber: number;
 
-		trackNumber = numberingQueue.getTrackPosition(track);
+		trackNumber = numberingQueue.getTrackPosition(track) + 1;
 
 		// if (!queue || queue.isEmpty()){
 		// 	trackNumber = 1;
