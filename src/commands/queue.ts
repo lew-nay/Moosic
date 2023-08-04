@@ -23,15 +23,19 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 
 	let bareString = "Current queue: \n";
 
-	for (let i = 0; i < 50 && i < tracks.length; i++){
+	let i = 0;
+
+	while (i < tracks.length){
 		const track = tracks[i];
 		let trackToAdd = `**[${i+1}]:** ${track.title} - ${track.author}\n`;
 		
 		if ((bareString.length + trackToAdd.length) > 2000){
-			break;
+			await reply(bareString);
+			bareString = "";
 		}
 
 		bareString += trackToAdd;
+		i++
 	}
 
 	await reply(bareString);

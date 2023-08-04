@@ -30,7 +30,7 @@ export const slashHandler = async (interaction: ChatInputCommandInteraction<Cach
 
     await interaction.deferReply();
 
-    await shuffleQueue(channel, interaction.guild!, interaction.followUp.bind as ReplyFunction);
+    await shuffleQueue(channel, interaction.guild!, interaction.followUp.bind(interaction) as ReplyFunction);
 }
 
 export const textHandler = async(message: Message) => {
