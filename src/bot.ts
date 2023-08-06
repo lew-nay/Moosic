@@ -19,7 +19,6 @@ import { Player } from "discord-player";
 
 const player = new Player(client);
 
-import pingImport from "./commands/ping";
 import joinImport from "./commands/join";
 import disconnectImport from "./commands/disconnect";
 import playImport from "./commands/play";
@@ -30,6 +29,19 @@ import removeImport from "./commands/remove";
 import shuffleImport from "./commands/shuffle";
 
 const BOT_PREFIX = "+";
+
+const commandMap = {
+	[`${BOT_PREFIX}join`]: joinImport,
+	[`${BOT_PREFIX}disconnect`]: disconnectImport,
+	[`${BOT_PREFIX}play`]: playImport,
+	[`${BOT_PREFIX}queue`]: queueImport,
+	[`${BOT_PREFIX}skip`]: skipImport,
+	[`${BOT_PREFIX}clear`]: clearImport,
+	[`${BOT_PREFIX}remove`]: removeImport,
+	[`${BOT_PREFIX}shuffle`]: shuffleImport,
+};
+
+console.log('loaded commands', commandMap);
 
 player.on("debug", async (message) => {
 	// Emitted when the player sends debug info
@@ -69,35 +81,22 @@ client.on(Events.MessageCreate, async (message) => {
 
 	console.log("commandType and restArgs together", commandType, restArgs);
 
-	switch (commandType.toLowerCase()) {
-		case `${BOT_PREFIX}join`: 
-			joinImport.textHandler(message, restArgs);
-			break;
-		case `${BOT_PREFIX}disconnect`:
-			disconnectImport.textHandler(message);
-			break;
-		case `${BOT_PREFIX}play`:
-			playImport.textHandler(message, restArgs, player);
-			break;
-		case `${BOT_PREFIX}queue`:
-			queueImport.textHandler(message);
-			break;
-		case `${BOT_PREFIX}skip`:
-			skipImport.textHandler(message);
-			break;
-		case `${BOT_PREFIX}clear`:
-			clearImport.textHandler(message);
-			break;
-		case `${BOT_PREFIX}remove`:
-			removeImport.textHandler(message, restArgs);
-			break;
-		case `${BOT_PREFIX}shuffle`:
-			shuffleImport.textHandler(message);
-			break;
-		default:
-			message.reply("Command not found");
+	const commandHandler = commandMap[commandType.toLowerCase()];
+
+	if (!commandHandler) {
+		message.reply("Command not found");
 		return;
-	};
+	}
+
+	// may be useful in future if different handlers have VERY different signatures
+	// const ctx = {
+	// 	message,
+	// 	restArgs,
+	// 	player,
+	// 	// ...
+	// }
+
+	await commandHandler.textHandler(message, restArgs, player);
 });
 
 //Events.InteractionCreate - static is better ;)
@@ -105,35 +104,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	console.log("interactCreateEvent", interaction);
 	if (!interaction.isChatInputCommand()) return;
 
-	switch (interaction.commandName) {
-		case "ping":
-			pingImport.execute(interaction);
-			break;
-		case "join":
-			joinImport.slashHandler(interaction);
-			break;
-		case "disconnect":
-			disconnectImport.slashHandler(interaction);
-			break;
-		case "play":
-			playImport.slashHandler(interaction, player);
-			break;
-		case "queue":
-			queueImport.slashHandler(interaction);
-			break;
-		case "skip":
-			skipImport.slashHandler(interaction);
-			break;
-		case "clear":
-			clearImport.slashHandler(interaction);
-			break;
-		case "remove":
-			removeImport.slashHandler(interaction);
-			break;
-		case "shuffle":
-			shuffleImport.slashHandler(interaction);
-			break;
-	}
+	const commandHandler = commandMap[BOT_PREFIX + interaction.commandName];
+
+	await commandHandler.slashHandler(interaction, player);
 });
 
 client.on(Events.ClientReady, () => {

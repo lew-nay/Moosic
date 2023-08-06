@@ -1,5 +1,4 @@
 import { botToken, clientId } from "./config";
-import pingImport from "./commands/ping";
 import joinImport from "./commands/join";
 import disconnectImport from "./commands/disconnect";
 import playImport from "./commands/play";
@@ -13,7 +12,6 @@ import { REST, Routes } from "discord.js"; //classes capitalised
 //sets up the slash commands
 async function setupCommands() {
 	const commands = [
-		pingImport.data,
 		joinImport.data,
 		disconnectImport.data,
 		playImport.data,
