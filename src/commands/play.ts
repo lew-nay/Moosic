@@ -67,13 +67,6 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 
 		trackNumber = numberingQueue.getTrackPosition(track) + 1;
 
-		// if (!queue || queue.isEmpty()){
-		// 	trackNumber = 1;
-		// }
-		// else {
-		// 	trackNumber = tracks!.length;
-		// }
-
 		const playEmbed = new EmbedBuilder()
 				.setTitle(track.title)
 				.setAuthor({name: 'Enqueued:'})
