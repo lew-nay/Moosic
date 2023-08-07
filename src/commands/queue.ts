@@ -6,7 +6,7 @@ import {
 	CacheType,
 	CommandInteraction,
 	ChatInputCommandInteraction,
-	TextChannel,
+	TextChannel
 	} from "discord.js";
 import { useQueue } from "discord-player";
 
@@ -25,20 +25,29 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 
 	let i = 0;
 
-	while (i < tracks.length){
-		const track = tracks[i];
-		let trackToAdd = `**[${i+1}]:** ${track.title} - ${track.author}\n`;
+	const queueEmbed = new EmbedBuilder()
+			.setAuthor({ name: "Current queue:"})
 		
-		if ((bareString.length + trackToAdd.length) > 2000){
-			await reply(bareString);
-			bareString = "";
-		}
-
-		bareString += trackToAdd;
-		i++
+	while(i < tracks.length){
+		const track = tracks[i];
+		let trackToAdd = `${track.title} - ${track.author}`;
+		queueEmbed.addFields({name: (i+1).toString(), value: trackToAdd})
 	}
 
-	await reply(bareString);
+	// while (i < tracks.length){
+	// 	const track = tracks[i];
+	// 	let trackToAdd = `**[${i+1}]:** ${track.title} - ${track.author}\n`;
+		
+	// 	if ((bareString.length + trackToAdd.length) > 2000){
+	// 		await reply(bareString);
+	// 		bareString = "";
+	// 	}
+
+	// 	bareString += trackToAdd;
+	// 	i++
+	// }
+
+	await reply({embeds: [queueEmbed]});
 }
 
 export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
