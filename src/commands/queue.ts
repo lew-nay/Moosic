@@ -35,7 +35,7 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 
 		let trackToAdd = `${track.title} - ${track.author}`;
 
-		queueEmbed.setDescription(`**${i+1}:** ` + trackToAdd)
+		queueEmbed.addFields({name: (i+1).toString(), value: trackToAdd})
 		i++;
 	}
 
