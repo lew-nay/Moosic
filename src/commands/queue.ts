@@ -22,15 +22,13 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 	const tracks = queue.tracks.toArray();
 	const pagesRequired = tracks.length % 25
 
-	let bareString = "Current queue: \n";
-
 	let i = 0;
 
 	const queueEmbed = new EmbedBuilder()
 			.setAuthor({name: "Current queue:"})
 
 
-	while (i < tracks.length){
+	while (i < tracks.length && i < 25){
 		const track = tracks[i];
 
 		let trackToAdd = `${track.title} - ${track.author}`;
