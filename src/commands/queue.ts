@@ -7,10 +7,75 @@ import {
 	CommandInteraction,
 	ChatInputCommandInteraction,
 	TextChannel,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ButtonStyle,
 	} from "discord.js";
-import { useQueue } from "discord-player";
+import { GuildQueue, useQueue } from "discord-player";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
+
+const TRACKS_PER_PAGE = 25;
+
+const displayPageEmbed = async (reply: ReplyFunction, page: number, queue: GuildQueue) => {
+	const tracks = queue.tracks.toArray();
+	const totalPages = (tracks.length / 25).toFixed(0)
+
+	const pageTracks = tracks
+		.slice(page * TRACKS_PER_PAGE, page * TRACKS_PER_PAGE + TRACKS_PER_PAGE)
+		.filter(track => !!track) //filtering out null and undefines
+
+
+	const queueEmbed = new EmbedBuilder()
+		.setAuthor({name: "Current queue:"})
+
+
+	for (let i = 0; i < pageTracks.length; i++) {
+		const track = pageTracks[i];
+		const trackToAdd = `${track.title} - ${track.author}`;
+
+		queueEmbed.addFields({name: (i+1 + (page * TRACKS_PER_PAGE)).toString(), value: trackToAdd})
+	}
+
+	const btnForward = new ButtonBuilder()
+		.setStyle(ButtonStyle.Primary)
+		.setCustomId('forwards')
+		.setDisabled(page+1 >= parseInt(totalPages))
+		.setEmoji('➡')
+			
+	const btnBack = new ButtonBuilder()
+		.setStyle(ButtonStyle.Primary)
+		.setCustomId("backwards")
+		.setDisabled(page-1 < 0)
+		.setEmoji("⬅")
+	
+	const btnPageNo = new ButtonBuilder()
+		.setStyle(ButtonStyle.Secondary)
+		.setCustomId("fuck you")
+		.setDisabled(true)
+		.setLabel(`${page + 1} / ${totalPages}`)
+
+	const actionRow = new ActionRowBuilder()
+		.addComponents(btnBack, btnPageNo, btnForward);
+
+	const response = await reply({embeds: [queueEmbed], components: [actionRow as any]});
+
+	try { 
+		const confirmation = await response.awaitMessageComponent({time: 120_000 });
+
+		if (confirmation.customId === 'forwards') {
+			console.log('forwards');
+			await displayPageEmbed(async (params: any) => await confirmation.update(params), page+1, queue);
+		} 
+		else if (confirmation.customId === 'backwards') {
+			console.log('backwards');
+			await displayPageEmbed(async (params: any) => await confirmation.update(params), page-1, queue);
+		}
+	} catch (err) {
+		await reply({ embeds: [queueEmbed], components: [] })
+		console.log('lol timeout')
+	}
+}
 
 const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
 	const queue = useQueue(guild.id);
@@ -19,25 +84,7 @@ const viewQueue =  async(messageChannel: TextChannel | null, guild: Guild, reply
 		return reply("Queue is empty.");
 	}
 
-	const tracks = queue.tracks.toArray();
-	const pagesRequired = tracks.length % 25
-
-	let i = 0;
-
-	const queueEmbed = new EmbedBuilder()
-			.setAuthor({name: "Current queue:"})
-
-
-	while (i < tracks.length && i < 25){
-		const track = tracks[i];
-
-		let trackToAdd = `${track.title} - ${track.author}`;
-
-		queueEmbed.addFields({name: (i+1).toString(), value: trackToAdd})
-		i++;
-	}
-
-	await reply({embeds: [queueEmbed]});
+	await displayPageEmbed(reply, 0, queue);
 }
 
 export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
