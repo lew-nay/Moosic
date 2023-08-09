@@ -41,7 +41,7 @@ const commandMap = {
 	[`${BOT_PREFIX}shuffle`]: shuffleImport,
 };
 
-console.log('loaded commands', commandMap);
+//console.log('loaded commands', commandMap);
 
 player.on("debug", async (message) => {
 	// Emitted when the player sends debug info

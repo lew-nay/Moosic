@@ -12,6 +12,7 @@ import {
 	ButtonStyle,
 	} from "discord.js";
 import { GuildQueue, useQueue } from "discord-player";
+import shuffleImport from './shuffle';
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
@@ -23,7 +24,7 @@ const displayPageEmbed = async (reply: ReplyFunction, page: number, queue: Guild
 
 	const pageTracks = tracks
 		.slice(page * TRACKS_PER_PAGE, page * TRACKS_PER_PAGE + TRACKS_PER_PAGE)
-		.filter(track => !!track) //filtering out null and undefines
+		.filter(track => !!track) //filtering out null and undefineds
 
 
 	const queueEmbed = new EmbedBuilder()
@@ -51,29 +52,56 @@ const displayPageEmbed = async (reply: ReplyFunction, page: number, queue: Guild
 	
 	const btnPageNo = new ButtonBuilder()
 		.setStyle(ButtonStyle.Secondary)
-		.setCustomId("fuck you")
+		.setCustomId("pagedisplay")
 		.setDisabled(true)
 		.setLabel(`${page + 1} / ${totalPages}`)
+	
+	const btnShuffle = new ButtonBuilder()
+		.setStyle(ButtonStyle.Primary)
+		.setCustomId("shuffle")
+		.setLabel('🔀')
 
 	const actionRow = new ActionRowBuilder()
-		.addComponents(btnBack, btnPageNo, btnForward);
+		.addComponents(btnBack, btnPageNo, btnForward, btnShuffle);
 
 	const response = await reply({embeds: [queueEmbed], components: [actionRow as any]});
 
 	try { 
 		const confirmation = await response.awaitMessageComponent({time: 120_000 });
 
-		if (confirmation.customId === 'forwards') {
-			console.log('forwards');
-			await displayPageEmbed(async (params: any) => await confirmation.update(params), page+1, queue);
-		} 
-		else if (confirmation.customId === 'backwards') {
-			console.log('backwards');
-			await displayPageEmbed(async (params: any) => await confirmation.update(params), page-1, queue);
+		// if (confirmation.customId === 'forwards') {
+		// 	console.log('forwards');
+		// 	await displayPageEmbed(async (params: any) => await confirmation.update(params), page+1, queue);
+		// } 
+		// else if (confirmation.customId === 'backwards') {
+		// 	console.log('backwards');
+		// 	await displayPageEmbed(async (params: any) => await confirmation.update(params), page-1, queue);
+		// }
+
+		switch(confirmation.customId){
+			case 'forwards':
+				console.log('forwards');
+				await displayPageEmbed(async (params: any) => await confirmation.update(params), page+1, queue);
+				break;
+			case 'backwards':
+				console.log('backwards');
+				await displayPageEmbed(async (params: any) => await confirmation.update(params), page-1, queue);
+				break;
+			case 'shuffle':
+				console.log('shuffle');
+				
+				if (!queue || queue.isEmpty()){
+        			return reply('Queue is empty.');
+   				}
+
+    			queue.tracks.shuffle();
+
+    			await displayPageEmbed(async (params: any) => await confirmation.update(params), page, queue);
+				break;
 		}
 	} catch (err) {
 		await reply({ embeds: [queueEmbed], components: [] })
-		console.log('lol timeout')
+		console.log('timed out')
 	}
 }
 
