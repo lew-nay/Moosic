@@ -89,9 +89,9 @@ const displayPageEmbed = async (reply: ReplyFunction, page: number, queue: Guild
 				break;
 			case 'shuffle':
 				console.log('shuffle');
-				
+
 				if (!queue || queue.isEmpty()){
-        			return reply('Queue is empty.');
+        			break;
    				}
 
     			queue.tracks.shuffle();
