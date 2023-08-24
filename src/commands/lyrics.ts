@@ -35,9 +35,9 @@ const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextCha
     const trimmedLyrics = lyrics.lyrics.substring(0, 1997);
 
     const lyricsEmbed = new EmbedBuilder()
-        .setTitle(currentTrack!.title)
-        .setAuthor({ name: currentTrack!.author})
-        .setThumbnail(currentTrack!.thumbnail)
+        .setTitle(lyrics.title)
+        .setAuthor({ name: lyrics.artist.name})
+        .setThumbnail(lyrics.thumbnail)
         .setDescription(trimmedLyrics);
 
     await reply({embeds: [lyricsEmbed]});
