@@ -12,7 +12,6 @@ import {
 	ButtonStyle,
 	} from "discord.js";
 import { GuildQueue, useQueue } from "discord-player";
-import shuffleImport from './shuffle';
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
