@@ -27,6 +27,7 @@ import skipImport from "./commands/skip";
 import clearImport from "./commands/clear";
 import removeImport from "./commands/remove";
 import shuffleImport from "./commands/shuffle";
+import lyricsImport from "./commands/lyrics";
 
 const BOT_PREFIX = "+";
 
@@ -39,6 +40,7 @@ const commandMap = {
 	[`${BOT_PREFIX}clear`]: clearImport,
 	[`${BOT_PREFIX}remove`]: removeImport,
 	[`${BOT_PREFIX}shuffle`]: shuffleImport,
+	[`${BOT_PREFIX}lyrics`]: lyricsImport,
 };
 
 //console.log('loaded commands', commandMap);
