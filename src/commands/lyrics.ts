@@ -11,21 +11,19 @@ import {
 	TextChannel,
     Embed,
 	} from "discord.js";
-import { joinVoiceChannel } from "@discordjs/voice";
-import { myVoiceChannels } from "../voiceChannels";
 import { Player, useQueue, GuildQueuePlayerNode, GuildQueue } from "discord-player";
 import { lyricsExtractor } from "@discord-player/extractor";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
 const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
-    const queue = useQueue(guild.id)
+    const queue = useQueue(guild.id);
     
     if (!queue || queue.isEmpty()){
         return reply('No song is currently playing.'); 
     }
     
-    const currentTrack = queue!.currentTrack;
+    const currentTrack = queue![-1];
     const lyricsFinder = lyricsExtractor();
 
     const lyrics = await lyricsFinder.search(currentTrack!.title.toString()).catch(() => null);
