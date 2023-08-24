@@ -9,7 +9,6 @@ import {
 	GuildMember,
 	VoiceBasedChannel,
 	TextChannel,
-    Embed,
 	} from "discord.js";
 import { Player, useQueue, GuildQueuePlayerNode, GuildQueue } from "discord-player";
 import { lyricsExtractor } from "@discord-player/extractor";
@@ -18,13 +17,15 @@ type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'
 
 const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
     const queue = useQueue(guild.id);
-    
-    if (!queue || queue.isEmpty()){
+    const currentTrack = queue!.currentTrack;
+    const lyricsFinder = lyricsExtractor();
+
+    if (!currentTrack){
         return reply('No song is currently playing.'); 
     }
-    
-    const currentTrack = queue![-1];
-    const lyricsFinder = lyricsExtractor();
+
+    const currentTrackString = currentTrack!.toString();
+    console.log('song name: ' + currentTrackString);
 
     const lyrics = await lyricsFinder.search(currentTrack!.title.toString()).catch(() => null);
     if (!lyrics){
