@@ -28,19 +28,32 @@ const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextCha
     console.log('song name: ' + currentTrackString);
 
     const lyrics = await lyricsFinder.search(currentTrack!.title.toString()).catch(() => null);
+    
     if (!lyrics){
         return reply("Lyrics not found.")
     }
-    
-    const trimmedLyrics = lyrics.lyrics.substring(0, 1997);
 
-    const lyricsEmbed = new EmbedBuilder()
+    const CHARS_PER_PAGE = 2000;
+
+    const pages = (lyrics.lyrics.length / CHARS_PER_PAGE).toFixed(0);
+    const totalPages = parseInt(pages) + 1;
+    console.log('pages:' + totalPages)
+
+    for (let i = 0; i <= parseInt(pages); i++) {
+        let j = i * 2000;
+        const trimmedLyrics = lyrics.lyrics.substring(j, j+2000);
+
+        //await reply(trimmedLyrics);
+
+        const lyricsEmbed = new EmbedBuilder()
         .setTitle(lyrics.title)
         .setAuthor({ name: lyrics.artist.name})
         .setThumbnail(lyrics.thumbnail)
-        .setDescription(trimmedLyrics);
+        .setDescription(trimmedLyrics)
+        .setFooter({text:`${i+1} / ${totalPages}`})
 
     await reply({embeds: [lyricsEmbed]});
+    }
 }
 
 export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>, player) => {
