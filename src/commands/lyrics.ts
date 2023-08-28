@@ -27,21 +27,23 @@ const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextCha
     const currentTrackString = currentTrack!.toString();
     console.log('song name: ' + currentTrackString);
 
-    const lyrics = await lyricsFinder.search(currentTrack!.title.toString()).catch(() => null);
+    const lyrics = await lyricsFinder.search(currentTrack!.toString()).catch(() => null);
+
+    //await deferReply();
     
     if (!lyrics){
         return reply("Lyrics not found.")
     }
 
-    const CHARS_PER_PAGE = 2000;
+    const CHARS_PER_PAGE = 4096;
 
     const pages = (lyrics.lyrics.length / CHARS_PER_PAGE).toFixed(0);
-    const totalPages = parseInt(pages) + 1;
+    const totalPages = parseInt(pages);
     console.log('pages:' + totalPages)
 
-    for (let i = 0; i <= parseInt(pages); i++) {
-        let j = i * 2000;
-        const trimmedLyrics = lyrics.lyrics.substring(j, j+2000);
+    for (let i = 0; i < parseInt(pages); i++) {
+        let j = i * 4096;
+        const trimmedLyrics = lyrics.lyrics.substring(j, j+4096);
 
         //await reply(trimmedLyrics);
 
@@ -50,7 +52,6 @@ const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextCha
         .setAuthor({ name: lyrics.artist.name})
         .setThumbnail(lyrics.thumbnail)
         .setDescription(trimmedLyrics)
-        .setFooter({text:`${i+1} / ${totalPages}`})
 
     await reply({embeds: [lyricsEmbed]});
     }
