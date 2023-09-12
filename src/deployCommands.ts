@@ -8,6 +8,7 @@ import clearImport from "./commands/clear";
 import removeImport from "./commands/remove";
 import shuffleImport from "./commands/shuffle";
 import lyricsImport from "./commands/lyrics";
+import currentImport from "./commands/current";
 import { REST, Routes } from "discord.js"; //classes capitalised
 
 //sets up the slash commands
@@ -22,6 +23,7 @@ async function setupCommands() {
 		removeImport.data,
 		shuffleImport.data,
 		lyricsImport.data,
+		currentImport.data,
 	];
 
 	//idk what this actually does, was in the example, doesn't work without it

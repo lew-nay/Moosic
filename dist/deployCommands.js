@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("./config");
-const ping_1 = __importDefault(require("./commands/ping"));
 const join_1 = __importDefault(require("./commands/join"));
 const disconnect_1 = __importDefault(require("./commands/disconnect"));
 const play_1 = __importDefault(require("./commands/play"));
@@ -21,12 +20,14 @@ const skip_1 = __importDefault(require("./commands/skip"));
 const queue_1 = __importDefault(require("./commands/queue"));
 const clear_1 = __importDefault(require("./commands/clear"));
 const remove_1 = __importDefault(require("./commands/remove"));
+const shuffle_1 = __importDefault(require("./commands/shuffle"));
+const lyrics_1 = __importDefault(require("./commands/lyrics"));
+const current_1 = __importDefault(require("./commands/current"));
 const discord_js_1 = require("discord.js"); //classes capitalised
 //sets up the slash commands
 function setupCommands() {
     return __awaiter(this, void 0, void 0, function* () {
         const commands = [
-            ping_1.default.data,
             join_1.default.data,
             disconnect_1.default.data,
             play_1.default.data,
@@ -34,6 +35,9 @@ function setupCommands() {
             queue_1.default.data,
             clear_1.default.data,
             remove_1.default.data,
+            shuffle_1.default.data,
+            lyrics_1.default.data,
+            current_1.default.data,
         ];
         //idk what this actually does, was in the example, doesn't work without it
         const rest = new discord_js_1.REST({ version: "10" }).setToken(config_1.botToken);

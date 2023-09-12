@@ -25,7 +25,6 @@ const client = new discord_js_1.Client({
 });
 const discord_player_1 = require("discord-player");
 const player = new discord_player_1.Player(client);
-const ping_1 = __importDefault(require("./commands/ping"));
 const join_1 = __importDefault(require("./commands/join"));
 const disconnect_1 = __importDefault(require("./commands/disconnect"));
 const play_1 = __importDefault(require("./commands/play"));
@@ -33,7 +32,23 @@ const queue_1 = __importDefault(require("./commands/queue"));
 const skip_1 = __importDefault(require("./commands/skip"));
 const clear_1 = __importDefault(require("./commands/clear"));
 const remove_1 = __importDefault(require("./commands/remove"));
+const shuffle_1 = __importDefault(require("./commands/shuffle"));
+const lyrics_1 = __importDefault(require("./commands/lyrics"));
+const current_1 = __importDefault(require("./commands/current"));
 const BOT_PREFIX = "+";
+const commandMap = {
+    [`${BOT_PREFIX}join`]: join_1.default,
+    [`${BOT_PREFIX}disconnect`]: disconnect_1.default,
+    [`${BOT_PREFIX}play`]: play_1.default,
+    [`${BOT_PREFIX}queue`]: queue_1.default,
+    [`${BOT_PREFIX}skip`]: skip_1.default,
+    [`${BOT_PREFIX}clear`]: clear_1.default,
+    [`${BOT_PREFIX}remove`]: remove_1.default,
+    [`${BOT_PREFIX}shuffle`]: shuffle_1.default,
+    [`${BOT_PREFIX}lyrics`]: lyrics_1.default,
+    [`${BOT_PREFIX}current`]: current_1.default,
+};
+//console.log('loaded commands', commandMap);
 player.on("debug", (message) => __awaiter(void 0, void 0, void 0, function* () {
     // Emitted when the player sends debug info
     // Useful for seeing what dependencies, extractors, etc are loaded
@@ -64,65 +79,27 @@ client.on(discord_js_1.Events.MessageCreate, (message) => __awaiter(void 0, void
     // fetch the channel this came from to get the full channel 
     yield message.channel.fetch();
     console.log("commandType and restArgs together", commandType, restArgs);
-    switch (commandType.toLowerCase()) {
-        case `${BOT_PREFIX}join`:
-            join_1.default.textHandler(message, restArgs);
-            break;
-        case `${BOT_PREFIX}disconnect`:
-            disconnect_1.default.textHandler(message);
-            break;
-        case `${BOT_PREFIX}play`:
-            play_1.default.textHandler(message, restArgs, player);
-            break;
-        case `${BOT_PREFIX}queue`:
-            queue_1.default.textHandler(message);
-            break;
-        case `${BOT_PREFIX}skip`:
-            skip_1.default.textHandler(message);
-            break;
-        case `${BOT_PREFIX}clear`:
-            clear_1.default.textHandler(message);
-            break;
-        case `${BOT_PREFIX}remove`:
-            remove_1.default.textHandler(message, restArgs);
-            break;
-        default:
-            message.reply("Command not found");
-            return;
+    const commandHandler = commandMap[commandType.toLowerCase()];
+    if (!commandHandler) {
+        message.reply("Command not found");
+        return;
     }
-    ;
+    // may be useful in future if different handlers have VERY different signatures
+    // const ctx = {
+    // 	message,
+    // 	restArgs,
+    // 	player,
+    // 	// ...
+    // }
+    yield commandHandler.textHandler(message, restArgs, player);
 }));
 //Events.InteractionCreate - static is better ;)
 client.on(discord_js_1.Events.InteractionCreate, (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("interactCreateEvent", interaction);
     if (!interaction.isChatInputCommand())
         return;
-    switch (interaction.commandName) {
-        case "ping":
-            ping_1.default.execute(interaction);
-            break;
-        case "join":
-            join_1.default.slashHandler(interaction);
-            break;
-        case "disconnect":
-            disconnect_1.default.slashHandler(interaction);
-            break;
-        case "play":
-            play_1.default.slashHandler(interaction, player);
-            break;
-        case "queue":
-            queue_1.default.slashHandler(interaction);
-            break;
-        case "skip":
-            skip_1.default.slashHandler(interaction);
-            break;
-        case "clear":
-            clear_1.default.slashHandler(interaction);
-            break;
-        case "remove":
-            remove_1.default.slashHandler(interaction);
-            break;
-    }
+    const commandHandler = commandMap[BOT_PREFIX + interaction.commandName];
+    yield commandHandler.slashHandler(interaction, player);
 }));
 client.on(discord_js_1.Events.ClientReady, () => {
     var _a;

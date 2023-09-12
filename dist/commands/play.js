@@ -37,8 +37,7 @@ const play = (channelToJoin, messageChannel, guild, reply, player, query, engine
     try {
         const { track } = yield player.play(channelToJoin, query, {
             nodeOptions: {
-                metadata: messageChannel,
-                resampler: 3200,
+                metadata: messageChannel, //metadata is what gets passed into the events,
             },
             searchEngine: engine,
             audioPlayerOptions: {
@@ -46,14 +45,9 @@ const play = (channelToJoin, messageChannel, guild, reply, player, query, engine
             },
         });
         const queue = (0, discord_player_1.useQueue)(guild.id);
-        const tracks = queue === null || queue === void 0 ? void 0 : queue.tracks.toArray();
+        const numberingQueue = new discord_player_1.GuildQueuePlayerNode(queue);
         let trackNumber;
-        if (!queue || queue.isEmpty()) {
-            trackNumber = 1;
-        }
-        else {
-            trackNumber = tracks.length;
-        }
+        trackNumber = numberingQueue.getTrackPosition(track) + 1;
         const playEmbed = new discord_js_1.EmbedBuilder()
             .setTitle(track.title)
             .setAuthor({ name: 'Enqueued:' })
