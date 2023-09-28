@@ -16,7 +16,7 @@ type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'
 const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
     const queue = useQueue(guild.id);
 
-    if (!queue || queue.isEmpty()){
+    if (!queue){
         return reply("No song is currently playing.");
     }
 
