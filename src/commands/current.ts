@@ -32,7 +32,7 @@ const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild,
         .setAuthor({ name: 'Currently playing:'})
         .setThumbnail(song!.thumbnail)
         .setDescription(song!.author)
-        .addFields({name: 'Progress', value: progressBar });
+        .addFields({name: 'Time:', value: progressBar });
     
     reply({embeds: [currentEmbed]});
 
