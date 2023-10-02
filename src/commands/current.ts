@@ -8,6 +8,7 @@ import {
 	ChatInputCommandInteraction,
 	TextChannel,
     GuildMember,
+    Embed,
 	} from "discord.js";
 import { useQueue, GuildQueuePlayerNode } from "discord-player";
 
@@ -24,7 +25,18 @@ const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild,
 
     const guildQueue = new GuildQueuePlayerNode(queue!);
 
-    reply(guildQueue.createProgressBar() ?? "Progress bar failed.");
+    const progressBar = guildQueue.createProgressBar() ?? "Progress bar failed."
+
+    const currentEmbed = new EmbedBuilder()
+        .setTitle(song!.title)
+        .setAuthor({ name: 'Currently playing:'})
+        .setThumbnail(song!.thumbnail)
+        .setDescription(song!.author)
+        .addFields({name: 'Progress', value: progressBar });
+    
+    reply({embeds: [currentEmbed]});
+
+    //reply(guildQueue.createProgressBar() ?? "Progress bar failed.");
 }
 
 export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>, player) => {
