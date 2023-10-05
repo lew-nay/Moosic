@@ -7,6 +7,7 @@ import {
 	CommandInteraction,
 	ChatInputCommandInteraction,
 	TextChannel,
+    TextInputComponent,
 	} from "discord.js";
 import { useQueue, GuildQueuePlayerNode } from "discord-player";
 
@@ -25,20 +26,29 @@ const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild,
 
     const progressBar = guildQueue.createProgressBar() ?? "Progress bar failed."
     
-    const startTime = new Date().getTime();
-    
-    const duration = song!.duration;
+    // const startTime = new Date().getTime();
+    // const duration = parseInt(song!.duration);
+    // const endTime = startTime + duration;
 
     const currentEmbed = new EmbedBuilder()
         .setTitle(song!.title)
         .setAuthor({ name: 'Currently playing:'})
         .setThumbnail(song!.thumbnail)
         .setDescription(song!.author)
-        .addFields({name: 'Time:', value: progressBar })
-        .addFields({name: 'duration', value: duration});
+        .addFields({name: 'Time:', value: progressBar });
     
     reply({embeds: [currentEmbed]});
 
+    // let currentTime = new Date().getTime();
+
+    // while (currentTime <= endTime){
+    //     const updatedProgressBar = guildQueue.createProgressBar() ?? "Progress bar failed."
+
+    //     const TimeEmbed = new EmbedBuilder()
+    //         .addFields({name: 'Time', value: updatedProgressBar});
+        
+    //     reply({embeds: [TimeEmbed]});
+    // }
 }
 
 export const slashHandler = async (interaction: ChatInputCommandInteraction<CacheType>, player) => {
