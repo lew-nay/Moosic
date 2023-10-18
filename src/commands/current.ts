@@ -58,9 +58,9 @@ function setIntervalForChannel(guild: Guild, trackLength: string, reply: ReplyFu
 }
 
 function barUpdater(guild: Guild, reply: ReplyFunction){
-    const interval = channelMap[guild.id]!.interval;
+    const interval = channelMap[guild.id].interval;
 
-    if (!interval) {
+    if (!interval || interval == null) {
         console.log('help'); //shouldn't happen tbh
         return;
     }
