@@ -36,7 +36,7 @@ const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild,
         return;
     }
 
-    setIntervalForChannel(guild, embed.song!.duration, embed.msg.edit as ReplyFunction);
+    setIntervalForChannel(guild, embed.song!.duration, embed.msg.edit.bind(embed.msg) as ReplyFunction);
 }
 
 function setIntervalForChannel(guild: Guild, trackLength: string, reply: ReplyFunction){
