@@ -36,6 +36,14 @@ const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild,
         return;
     }
 
+	// if there is no channel yet, add one with null values
+    if (!channelMap[guild.id]) {
+	    channelMap[guild.id] = {
+		    interval: null,
+		    voice: null,
+	    }
+    }
+
     setIntervalForChannel(guild, embed.song!.duration, embed.msg.edit.bind(embed.msg) as ReplyFunction);
 }
 
