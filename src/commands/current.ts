@@ -62,7 +62,6 @@ function barUpdater(guild: Guild, reply: ReplyFunction){
 
     if (!interval || interval == null) {
         console.log('help'); //shouldn't happen tbh
-        reply('I am erroring at line 65 :(')
         return;
     }
 
