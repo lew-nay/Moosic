@@ -7,10 +7,10 @@ import {
 	CommandInteraction,
 	ChatInputCommandInteraction,
 	TextChannel,
-    TextInputComponent,
 	} from "discord.js";
 import { useQueue, GuildQueuePlayerNode } from "discord-player";
 
+// defining the 'type' ChannelMap
 type ChannelMap = {
     [key: string]: {
         voice: any;
@@ -22,32 +22,12 @@ type ChannelMap = {
     }
 }
 
+// creating an empty obj channelMap that is type ChannelMap
 const channelMap: ChannelMap = {};
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
 const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
-    // const queue = useQueue(guild.id);
-
-    // if (!queue){
-    //     return reply("No song is currently playing.");
-    // }
-
-    // const song = queue!.currentTrack;
-
-    // const guildQueue = new GuildQueuePlayerNode(queue!);
-
-    // const progressBar = guildQueue.createProgressBar() ?? "Progress bar failed."
-    
-    
-    // const currentEmbed = new EmbedBuilder()
-    // .setTitle(song!.title)
-    // .setAuthor({ name: 'Currently playing:'})
-    // .setThumbnail(song!.thumbnail)
-    // .setDescription(song!.author)
-    // .addFields({name: 'Time:', value: progressBar });
-    
-    // reply({embeds: [currentEmbed]}); // include this in func too i think
     
     const embed = await createProgressEmbed(guild, reply);
 
@@ -56,12 +36,9 @@ const currentlyPlaying = async(MessageChannel: TextChannel | null, guild: Guild,
         return;
     }
 
-    // do we not need to get the song length to know when to end the interval
-    // channelMap[guild.id].interval.trackLength = song!.duration;
     setIntervalForChannel(guild, embed.song!.duration, embed.msg.edit as ReplyFunction);
 }
 
-// lets focus on this first
 function setIntervalForChannel(guild: Guild, trackLength: string, reply: ReplyFunction){
     const interval = channelMap[guild.id].interval;
 
@@ -81,8 +58,7 @@ function setIntervalForChannel(guild: Guild, trackLength: string, reply: ReplyFu
 }
 
 function barUpdater(guild: Guild, reply: ReplyFunction){
-    // now you can use local interval instead of channel map
-    const interval = channelMap[guild.id].interval;
+    const interval = channelMap[guild.id]!.interval;
 
     if (!interval) {
         console.log('help'); //shouldn't happen tbh
@@ -94,7 +70,7 @@ function barUpdater(guild: Guild, reply: ReplyFunction){
 
     if (timePassed > endTime) {
         clearInterval(interval.id); // clears the "job" in node
-        channelMap[guild.id].interval = null; // null not happy because the "type" says it can't be null
+        channelMap[guild.id].interval = null; 
         return;
     }
 
