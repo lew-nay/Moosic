@@ -76,13 +76,12 @@ function barUpdater(guild: Guild, reply: ReplyFunction){
     const timePassed = Date.now() - interval.timeStarted
     const endTime = interval.timeStarted + parseInt(interval.trackLength)
 
-    if (timePassed > endTime) {
+    if (timePassed == endTime) {
         clearInterval(interval.id); // clears the "job" in node
         channelMap[guild.id].interval = null; 
         return;
     }
 
-    // TODO: do the actual update here
     createProgressEmbed(guild, reply);
 }
 
