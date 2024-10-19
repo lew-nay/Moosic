@@ -22,25 +22,22 @@ import { Player, useQueue, GuildQueuePlayerNode, GuildQueue } from "discord-play
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
-// im going  to remove message as arguement so errors can show where needs fix
 const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction, player: Player, query: string, engine?: string) => {
 
 	// Check if the bot is in a channel already in this guild
 	if (!myVoiceChannels[guild.id] || myVoiceChannels[guild.id] !== channelToJoin){
 		
 		if (!channelToJoin) {
-			// error here "you are not in a channel etc".
 			await reply("You are not in a voice channel.");
 			return;
 		}
 	
 		const voiceConnection = joinVoiceChannel({
 			channelId: channelToJoin.id,
-			guildId: guild.id,	// this should be guild.id from guild
-			adapterCreator: guild.voiceAdapterCreator, // this is just the guild.voiceAdapater
+			guildId: guild.id,	
+			adapterCreator: guild.voiceAdapterCreator,
 		});
 		
-		// yes! this one way, alternative is to use channelToJOin in the joinVoiceChannle function instead
 		myVoiceChannels[guild.id] = channelToJoin;
 
 		// await reply(`Joining: ${channelToJoin.name}`);
