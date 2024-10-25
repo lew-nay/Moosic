@@ -1,1 +1,0 @@
-{"version":3,"file":"voiceChannels.d.ts","sourceRoot":"","sources":["../src/voiceChannels.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,iBAAiB,EAAE,MAAM,YAAY,CAAC;AAGpD,KAAK,eAAe,GAAG;IACnB,CAAC,GAAG,EAAE,MAAM,GAAG,iBAAiB,CAAA;CACnC,CAAA;AAED,eAAO,MAAM,eAAe,EAAE,eAAoB,CAAC"}
