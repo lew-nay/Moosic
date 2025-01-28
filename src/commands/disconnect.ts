@@ -15,11 +15,13 @@ const disconnect = async (guild: Guild, reply: ReplyFunction) => {
 	
 	const channel = myVoiceChannels[guild.id];
 
+	if (!channel)
+		return void await reply("Bot is not currently in a channel.");
+
 	const connection = getVoiceConnection(channel.guild.id);
 	connection?.destroy();
 
 	await reply(`Disconnecting from: **${channel.name}**.`);
-	delete myVoiceChannels[guild.id];
 }
 
 export const data = new SlashCommandBuilder()

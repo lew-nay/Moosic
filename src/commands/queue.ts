@@ -76,14 +76,18 @@ const displayPageEmbed = async (reply: ReplyFunction, page: number, queue: Guild
 		// 	console.log('backwards');
 		// 	await displayPageEmbed(async (params: any) => await confirmation.update(params), page-1, queue);
 		// }
+		// confirmation.update()
 
 		switch(confirmation.customId){
 			case 'forwards':
 				console.log('forwards');
+				// TODO: Figure out why typescript is unhappy bunny
+				// @ts-ignore
 				await displayPageEmbed(async (params: any) => await confirmation.update(params), page+1, queue);
 				break;
 			case 'backwards':
 				console.log('backwards');
+				// @ts-ignore
 				await displayPageEmbed(async (params: any) => await confirmation.update(params), page-1, queue);
 				break;
 			case 'shuffle':
@@ -95,6 +99,7 @@ const displayPageEmbed = async (reply: ReplyFunction, page: number, queue: Guild
 
     			queue.tracks.shuffle();
 
+				// @ts-ignore
     			await displayPageEmbed(async (params: any) => await confirmation.update(params), page, queue);
 				break;
 		}

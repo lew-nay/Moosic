@@ -13,56 +13,60 @@ import {
 	} from "discord.js";
 import {
 	SpotifyExtractor,
-	YoutubeExtractor,
 	SoundCloudExtractor,
+	DefaultExtractors,
 } from "@discord-player/extractor";
-import { joinVoiceChannel } from "@discordjs/voice";
+import { joinVoiceChannel, VoiceConnection, getVoiceConnection } from "@discordjs/voice";
 import { myVoiceChannels } from "../voiceChannels";
-import { Player, useQueue, GuildQueuePlayerNode, GuildQueue } from "discord-player";
+import { Player, useQueue, GuildQueuePlayerNode, GuildQueue, useMainPlayer } from "discord-player";
+import { YoutubeiExtractor } from "discord-player-youtubei";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
-const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction, player: Player, query: string, engine?: string) => {
+const play = async (memberChannel: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction, playerArg: Player, query: string, engine?: string) => {
+	const player = useMainPlayer();
 
-	// Check if the bot is in a channel already in this guild
-	if (!myVoiceChannels[guild.id] || myVoiceChannels[guild.id] !== channelToJoin){
-		
-		if (!channelToJoin) {
-			await reply("You are not in a voice channel.");
-			return;
-		}
+	// let queue: GuildQueue;
+
+	// // Check if the bot is in a channel already in this guild
+	// if (!myVoiceChannels[guild.id] || myVoiceChannels[guild.id]?.id !== channelToJoin.id){
 	
-		const voiceConnection = joinVoiceChannel({
-			channelId: channelToJoin.id,
-			guildId: guild.id,	
-			adapterCreator: guild.voiceAdapterCreator,
-		});
+	// 	const voiceConnection = joinVoiceChannel({
+	// 		channelId: channelToJoin.id,
+	// 		guildId: guild.id,	
+	// 		adapterCreator: guild.voiceAdapterCreator,
+	// 	});
 		
-		myVoiceChannels[guild.id] = channelToJoin;
+	// 	myVoiceChannels[guild.id] = channelToJoin;
 
-		// await reply(`Joining: ${channelToJoin.name}`);
-	} 
+	// 	queue = await player.nodes.create(guild);
 
-	await player.extractors.loadDefault();
+	// 	queue.createDispatcher(voiceConnection as any);
+	// 	// await reply(`Joining: ${channelToJoin.name}`);
+	// } else {
+	// 	queue = useQueue(guild.id)!;
+	// }
+// 
+	const voiceChannel = myVoiceChannels[guild.id] || memberChannel;
+
+	if (!voiceChannel) 
+		return void await reply("A voice channel could not be found to play in.");
 
 	try {
-		const { track } = await player.play(channelToJoin, query, {
+		const { track, queue } = await player.play(voiceChannel, query, {
 			nodeOptions: {
 				metadata: messageChannel, //metadata is what gets passed into the events,
 			},
 			searchEngine: engine as any,
 			audioPlayerOptions: {
 				transitionMode: true,
+				queue: true,
 			},
 		});
 
-		const queue = useQueue(guild.id) as GuildQueue;
-		
 		const numberingQueue = new GuildQueuePlayerNode(queue);
 
-		let trackNumber: number;
-
-		trackNumber = numberingQueue.getTrackPosition(track) + 1;
+		const trackNumber = numberingQueue.getTrackPosition(track) + 1;
 
 		const playEmbed = new EmbedBuilder()
 				.setTitle(track.title)
@@ -71,7 +75,7 @@ const play = async (channelToJoin: VoiceBasedChannel | null, messageChannel: Tex
 				.setDescription(track.author)
 				.addFields({ name: 'Queue position:', value: trackNumber.toString() });
 
-	await reply({embeds: [playEmbed]});
+		await reply({embeds: [playEmbed]});
 	} 
 	catch (e) 
 		{
@@ -120,7 +124,7 @@ export const data = new SlashCommandBuilder()
 			.addChoices(
 				{
 					name: "Youtube",
-					value: `ext:${YoutubeExtractor.identifier}`,
+					value: `ext:${YoutubeiExtractor.identifier}`,
 				},
 				{
 					name: "Spotify",

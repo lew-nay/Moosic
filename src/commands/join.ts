@@ -8,8 +8,9 @@ import {
         Guild, 
         Message 
     } from 'discord.js';
-import { joinVoiceChannel } from '@discordjs/voice';
+import { getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
 import { myVoiceChannels } from '../voiceChannels';
+import { useMainPlayer } from 'discord-player';
 
 // We use the internal reply function of the interaction to type the replyFunction correctly.
 // This means our version can also accept embeds, options etc.
@@ -20,17 +21,31 @@ type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'
 // Takes in a "reply" function that is used to reply, this could either be the interaction.reply function 
 // or the channel that the "text" version was sent in.
 const join = async (channelToJoin: VoiceChannel, guild: Guild, reply: ReplyFunction) => {
-    const voiceConnection = joinVoiceChannel({
-        channelId: channelToJoin.id,
-        guildId: guild.id,
-        adapterCreator: guild.voiceAdapterCreator,
-    });
+
+    // If the channel is the same as the current one, skip.
+    const currentConnection = getVoiceConnection(guild.id);
+
+    if (currentConnection?.joinConfig.channelId === channelToJoin.id) 
+        return void await reply(`Bot is already in channel ${channelToJoin.name}`);
+    
+    // re-play the queue? 
+    const player = useMainPlayer();
+    const currentQueue = player.queues.get(guild.id);
 
     myVoiceChannels[guild.id] = channelToJoin;
 
-    console.log('myVoiceChannels', myVoiceChannels);
+    if (!currentQueue) {
+        const voiceConnection = joinVoiceChannel({
+            channelId: channelToJoin.id,
+            guildId: guild.id,
+            adapterCreator: guild.voiceAdapterCreator,
+        });
+        return void await reply(`Joining: **${channelToJoin.name}**. Waiting for songs.`);;
+    }
 
-    await reply(`Joining: **${channelToJoin.name}**.`);
+    currentQueue.connect(channelToJoin);
+
+    await reply(`Joining: **${channelToJoin.name}**. Resuming songs.`);
 }
 
 export const data = new SlashCommandBuilder()

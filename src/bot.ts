@@ -5,7 +5,11 @@ import {
 	GatewayIntentBits,
 	Events,
 	EmbedBuilder,
+	DefaultDeviceProperty,
 } from "discord.js"; //classes capitalised
+import { YoutubeiExtractor } from 'discord-player-youtubei';
+import { DefaultExtractors } from '@discord-player/extractor';
+
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -19,6 +23,9 @@ import { Player } from "discord-player";
 
 const player = new Player(client);
 
+player.extractors.register(YoutubeiExtractor, {});
+player.extractors.loadMulti(DefaultExtractors);
+
 import joinImport from "./commands/join";
 import disconnectImport from "./commands/disconnect";
 import playImport from "./commands/play";
@@ -29,6 +36,7 @@ import removeImport from "./commands/remove";
 import shuffleImport from "./commands/shuffle";
 import lyricsImport from "./commands/lyrics";
 import currentImport from "./commands/current";
+import { myVoiceChannels } from './voiceChannels';
 
 const BOT_PREFIX = "+";
 
@@ -50,16 +58,30 @@ const commandMap = {
 player.on("debug", async (message) => {
 	// Emitted when the player sends debug info
 	// Useful for seeing what dependencies, extractors, etc are loaded
-	console.log(`General player debug event: ${message}`);
+	console.log(`[player-DEBUG]: ${message}`);
 });
 
 player.events.on("debug", async (queue, message) => {
 	// Emitted when the player queue sends debug info
 	// Useful for seeing what state the current queue is at
-	console.log(`Player debug event: ${message}`);
+	console.log(`[queue-DEBUG]: ${message}`);
 });
 
+player.on("error", async (error) => {
+	console.error(`[player-ERR]: ${error.message}`, error);
+});
+
+player.events.on("error", async (queue, error) => {
+	console.error(`[queue-ERR]: ${error.message}`, error);
+});
+
+player.on("voiceStateUpdate", (queue, oldState, newState) => {
+	console.log(`[player-VOICE_STATE_UPDATE]: ${queue.tracks.size} queue size. ${oldState.streaming} -> ${newState.streaming}`);
+})
+
 player.events.on("playerStart", async (queue, track) => {
+	console.log(`[queue-START]: ${queue.tracks.size} queue size. Playing ${track.cleanTitle}`);
+
 	const trackEmbed = new EmbedBuilder()
 		.setTitle(track.title)
 		.setAuthor({ name: "Now playing:" })
@@ -68,6 +90,15 @@ player.events.on("playerStart", async (queue, track) => {
 
     // @ts-ignore
 	queue.metadata.send({ embeds: [trackEmbed] });
+});
+
+player.events.on("playerSkip", (queue, track, reason, description) => {
+	console.log(`[queue-PLAYER_SKIP]: ${queue.tracks.size} tracks - Skipped ${track.cleanTitle} - Reason: ${reason} - Description: ${description}`);
+});
+
+player.events.on("disconnect", (queue) => {
+	console.log(`[queue-DISCONNECT]: Queue disconnecting from guild ${queue.guild.name}....`);
+	delete myVoiceChannels[queue.guild.id];
 });
 
 client.on(Events.MessageCreate, async (message) => {
@@ -105,12 +136,13 @@ client.on(Events.MessageCreate, async (message) => {
 
 //Events.InteractionCreate - static is better ;)
 client.on(Events.InteractionCreate, async (interaction) => {
-	console.log("interactCreateEvent", interaction);
 	if (!interaction.isChatInputCommand()) return;
-
+	
 	const commandHandler = commandMap[BOT_PREFIX + interaction.commandName];
+	console.log(`New interaction command: '${interaction.commandName}' -- ${interaction.guild?.name}::${interaction.user.displayName}`,);
 
-	await commandHandler.slashHandler(interaction, player);
+	// await commandHandler.slashHandler(interaction, player);
+	await player.context.provide({ guild: interaction.guild! }, () => commandHandler.slashHandler(interaction, player))
 });
 
 client.on(Events.ClientReady, () => {

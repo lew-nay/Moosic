@@ -8,19 +8,33 @@ import {
 	ChatInputCommandInteraction,
 	TextChannel,
 	} from "discord.js";
-import { useQueue } from "discord-player";
+import { TrackSkipReason, useQueue } from "discord-player";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
 
 const skip = async(messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
 	const queue = useQueue(guild.id);
+
+	if (!queue) {
+		await reply("No queue.");
+		return;
+	}
+
+	console.log('Queue: ', queue?.currentTrack?.title, queue?.node.estimatedDuration, queue?.node.createProgressBar());
+
 	const track = queue?.currentTrack;
-	queue?.node.skip();
 
 	if (!track) {
 		await reply('No track currently playing.');
 		return;
 	}
+
+	const tst = queue.node.skip({
+		description: "Skipped by a pleb",
+		reason: TrackSkipReason.Manual
+	});
+
+	console.log('Skip result', tst);
 
 	const skipEmbed = new EmbedBuilder()
 			.setTitle(track.title)

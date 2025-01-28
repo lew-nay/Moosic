@@ -10,7 +10,7 @@ import {
 	VoiceBasedChannel,
 	TextChannel,
 	} from "discord.js";
-import { Player, useQueue, GuildQueuePlayerNode, GuildQueue } from "discord-player";
+import { Player, useQueue, GuildQueuePlayerNode, GuildQueue, useMainPlayer } from "discord-player";
 import { lyricsExtractor } from "@discord-player/extractor";
 
 type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'];
@@ -18,39 +18,47 @@ type ReplyFunction = typeof CommandInteraction.prototype.reply | Message['reply'
 const lyrics = async (channel: VoiceBasedChannel | null, messageChannel: TextChannel | null, guild: Guild, reply: ReplyFunction) => {
     const queue = useQueue(guild.id);
     const currentTrack = queue!.currentTrack;
-    const lyricsFinder = lyricsExtractor();
+  
+
+    const player = useMainPlayer()
 
     if (!currentTrack){
         return reply('No song is currently playing.'); 
     }
 
-    const currentTrackString = currentTrack!.toString();
+    const currentTrackString = currentTrack.cleanTitle;
     console.log('song name: ' + currentTrackString);
 
-    const lyrics = await lyricsFinder.search(currentTrack!.toString()).catch(() => null);
+    const lyricsResult = await player.lyrics.search({ q: currentTrackString }).catch(() => null);
 
     //await deferReply();
     
-    if (!lyrics){
+
+    if (!lyricsResult || lyricsResult.length === 0){
         return reply("Lyrics not found.")
     }
 
+    const lyrics = lyricsResult[0];
+
     const CHARS_PER_PAGE = 4096;
 
-    const pages = (lyrics.lyrics.length / CHARS_PER_PAGE).toFixed(0);
+    const pages = (lyrics.plainLyrics.length / CHARS_PER_PAGE).toFixed(0);
     const totalPages = parseInt(pages);
     console.log('pages:' + totalPages)
 
     for (let i = 0; i < parseInt(pages); i++) {
         let j = i * 4096;
-        const trimmedLyrics = lyrics.lyrics.substring(j, j+4096);
+        const trimmedLyrics = lyrics.plainLyrics.substring(j, j+4096);
 
         //await reply(trimmedLyrics);
 
         const lyricsEmbed = new EmbedBuilder()
-        .setTitle(lyrics.title)
-        .setAuthor({ name: lyrics.artist.name})
-        .setThumbnail(lyrics.thumbnail)
+        .setTitle(lyrics.trackName)
+        .setAuthor({ name: lyrics.artistName})
+        .setFooter({
+            text: lyrics.albumName
+        })
+        //.setThumbnail(lyrics[0].thumbnail)
         .setDescription(trimmedLyrics)
 
     await reply({embeds: [lyricsEmbed]});
