@@ -15,7 +15,7 @@ type ChannelMap = {
     [key: string]: {
         voice: any;
         interval: {
-            id: NodeJS.Timer,
+            id: NodeJS.Timeout,
             timeStarted: number,
             trackLength: string ,
         } | null;
