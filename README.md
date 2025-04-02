@@ -1,4 +1,4 @@
 # Moosic
 Discord music bot.
 
-contributed by Lew-Nay, banoulka.
+contributed by lew-nay, Banoulka.
