@@ -16,24 +16,24 @@
 		"@discord-player/extractor": "^7.1.0",
 		"@discordjs/opus": "^0.10.0",
 		"@discordjs/voice": "^0.18.0",
-		"@distube/ytdl-core": "^4.15.9",
+		"@distube/ytdl-core": "^4.16.12",
 		"@ffmpeg-installer/ffmpeg": "^1.1.0",
-		"discord-api-types": "^0.37.118",
+		"discord-api-types": "^0.38.20",
 		"discord-player": "^7.1.0",
-		"discord-player-youtubei": "^1.4.2",
-		"discord.js": "^14.17.3",
-		"dotenv": "^16.4.7",
+		"discord-player-youtubei": "^1.5.0",
+		"discord.js": "^14.21.0",
+		"dotenv": "^17.2.1",
 		"ffmpeg-static": "^5.2.0",
 		"libsodium-wrappers": "^0.7.15",
 		"opusscript": "^0.1.1",
 		"play-dl": "^1.9.7",
-		"youtube-api": "^3.0.1"
+		"youtube-api": "^3.0.2"
 	},
 	"devDependencies": {
-		"nodemon": "^3.1.9",
-		"prettier": "^3.4.2",
+		"nodemon": "^3.1.10",
+		"prettier": "^3.6.2",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.7.3"
+		"typescript": "^5.9.2"
 	},
 	"engines": {
 		"node": "20.x"
